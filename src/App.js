@@ -1,7 +1,12 @@
 import Navbar from "./Navbar";
+import AppRoute from "./AppRoute";
+
 
 export default function App() {
-  return (
-    <Navbar />
-  );
+    return (
+        <div>
+            <AppRoute />
+            <Navbar />
+        </div>
+    );
 }
