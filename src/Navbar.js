@@ -2,16 +2,13 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
 import Logo from './Logo';
+import { InputAdornment, OutlinedInput, Input } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+
+
 
 
 
@@ -39,22 +36,23 @@ export default function Navbar() {
         setAnchorElUser(null);
     };
 
+
     // Sets up an event listener that tracks the window size and 
     // updates the state of windowWidth whenever the window is resized.
     React.useEffect(() => {
         const handleResize = () => setWindowWidth(window.innerWidth);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-      }, []);
+    }, []);
 
     return (
-        
-        
+
+
         <AppBar style={{ backgroundColor: 'white' }} position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters style={{ display: 'flex', justifyContent: 'space-between' }}>
 
-                    {/* Menu when the page is not in full screen mode */}
+                    {/* Menu when the page is not in full screen mode
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -64,9 +62,9 @@ export default function Navbar() {
                             onClick={handleOpenNavMenu}
                             color="inherit"
                         >
-                        <MenuIcon style={{ color: 'grey' }}/>
+                            <MenuIcon style={{ color: 'grey' }} />
                         </IconButton>
-                        
+
                         <Menu
                             id="menu-appbar"
                             anchorEl={anchorElNav}
@@ -77,18 +75,18 @@ export default function Navbar() {
                             onClose={handleCloseNavMenu}
                             sx={{ display: { xs: 'block', md: 'none' }, }}
                         >
-                        
-                        {pages.map((page) => (
-                            <MenuItem key={page} onClick={handleCloseNavMenu}>
-                            <Typography textAlign="center">{page}</Typography>
-                            </MenuItem>
+
+                            {pages.map((page) => (
+                                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                    <Typography textAlign="center">{page}</Typography>
+                                </MenuItem>
                             ))}
                         </Menu>
-                        
-                    </Box>
-                    
-                    
-                    
+
+                    </Box> */}
+
+
+
 
                     {/* Logo */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'center', md: 'flex' } }}>
@@ -100,21 +98,33 @@ export default function Navbar() {
                             </Box>
                         )}
                     </Box>
-                       
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'grey', display: 'block' }}
-                            >
-                                {page}
-                            </Button>
-                        ))}
+
+                    {/* Search Bar */}
+                    <Box sx={{ flexGrow: 1, display: { xs: 'center', md: 'flex' } }}>
+                        <OutlinedInput 
+                            id="search-bar"
+                            type="text"
+                            placeholder='Search...'
+                            sx={{
+                                borderRadius: '40px',
+                            }}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <SearchIcon sx={{
+                                        backgroundColor: 'red',
+                                        borderRadius: '50%',
+                                        padding: '4px',
+                                        color: 'white',
+                                    }} />
+                            
+                                </InputAdornment>    
+                            }
+                        />  
                     </Box>
 
+
                     {/* Profile settings */}
-{/* 
+                    {/* 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Profile settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -145,10 +155,10 @@ export default function Navbar() {
                         </Menu>
                     </Box> */}
 
-                     {/* Sign up and Login buttons */}
+                    {/* Sign up and Login buttons */}
                     <Box sx={{ flexGrow: 0, display: { xs: 'end', md: 'flex' } }}>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button href="/signup"  variant="contained" color="primary">
+                            <Button href="/signup" variant="contained" color="primary">
                                 Sign up
                             </Button>
                             <Button href="/login" variant="contained" color="secondary" sx={{ ml: 1 }}>

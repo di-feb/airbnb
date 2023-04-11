@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from './Copyright';
 import Navbar from './Navbar'
+import Footer from './Footer'
 
 
 
@@ -96,7 +97,7 @@ export default function SignIn() {
                             </Grid>
                         </Box>
                     </Box>
-                    <Copyright sx={{ mt: 8, mb: 4 }} />
+                    <Footer />
                 </Container>
             </ThemeProvider>
         </div>

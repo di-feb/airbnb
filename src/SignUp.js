@@ -12,8 +12,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Copyright from './Copyright';
 import Navbar from './Navbar'
+import Footer from './Footer'
 
 
 const theme = createTheme();
@@ -116,7 +116,7 @@ export default function SignUp() {
                             </Grid>
                         </Box>
                     </Box>
-                    <Copyright sx={{ mt: 5 }} />
+                    <Footer />
                 </Container>
             </ThemeProvider>
         </div>
