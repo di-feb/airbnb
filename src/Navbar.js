@@ -5,9 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Logo from './Logo';
-import { InputAdornment, OutlinedInput, Input } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-
+import SearchBar from './SearchBar';
 
 
 
@@ -100,27 +98,7 @@ export default function Navbar() {
                     </Box>
 
                     {/* Search Bar */}
-                    <Box sx={{ flexGrow: 1, display: { xs: 'center', md: 'flex' } }}>
-                        <OutlinedInput 
-                            id="search-bar"
-                            type="text"
-                            placeholder='Search...'
-                            sx={{
-                                borderRadius: '40px',
-                            }}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <SearchIcon sx={{
-                                        backgroundColor: 'red',
-                                        borderRadius: '50%',
-                                        padding: '4px',
-                                        color: 'white',
-                                    }} />
-                            
-                                </InputAdornment>    
-                            }
-                        />  
-                    </Box>
+                    <SearchBar />
 
 
                     {/* Profile settings */}
@@ -158,7 +136,7 @@ export default function Navbar() {
                     {/* Sign up and Login buttons */}
                     <Box sx={{ flexGrow: 0, display: { xs: 'end', md: 'flex' } }}>
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <Button href="/signup" variant="contained" color="primary">
+                            <Button href="/signup" variant="contained" color="primary" sx={{maxHeight: '36px'}}>
                                 Sign up
                             </Button>
                             <Button href="/login" variant="contained" color="secondary" sx={{ ml: 1 }}>
