@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Logo(props) {
+export default function Logo() {
 
     const [count, setCount] = React.useState(0);
 
@@ -8,10 +8,7 @@ export default function Logo(props) {
     React.useEffect(()=> {
         count && window.location.replace('/');
     }, [count]);
-     
-    const centerOfPage = props.windowWidth / 2
-    const logoPosition =  (props.windowWidth > 700) ? "30px" : `${centerOfPage}px`
-    console.log(logoPosition, props.windowWidth > 700, props.windowWidth)
+
     return (
         <img src={require('./images/logo.png')}
             alt="logo" 

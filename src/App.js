@@ -1,4 +1,4 @@
-import Navbar from "./Navbar";
+
 import AppRoute from "./AppRoute";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SignUp from './SignUp';
@@ -22,7 +22,8 @@ export default function App() {
                 </Routes>
             </Router>
             {currentPath}
-            <Footer />
+
+            
         </div >
     );
 }

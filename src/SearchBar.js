@@ -1,26 +1,28 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { InputAdornment, OutlinedInput } from '@mui/material';
+
 import SearchIcon from '@mui/icons-material/Search';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
+
 // import { LocalizationProvider } from '@mui/x-date-pickers';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 
-export default function SearchBar() {
+export default function SearchBar(props) {
 
     const [openMenu, setOpenMenu] = React.useState(false);
     const [isClicked, setIsClicked] = React.useState({
         id: 0,
         flag: false
     });
-
+    console.log(isClicked.id)
+    
     return (
         <>
             {!openMenu &&
                 <Box sx={{ flexGrow: 1, display: { xs: 'center', md: 'flex' } }}>
-                    <Button    
+                    <Button
                         variant="outlined"
                         sx={{
                             borderRadius: '40px',
@@ -34,7 +36,7 @@ export default function SearchBar() {
                             textTransform: 'none',
 
                             '&:hover': {
-                                backgroundColor: 'white',
+                                backgroundColor: '#dedede',
                                 borderColor: 'black',
                                 borderWidth: '2px',
                             },
@@ -53,7 +55,7 @@ export default function SearchBar() {
                         }
                     >
 
-                        <Typography color="grey" fontWeight={openMenu && '600'} >
+                        <Typography color="grey" fontWeight={'400'} >
                             Search for accomondation
                         </Typography>
 
@@ -68,7 +70,7 @@ export default function SearchBar() {
                     flexGrow: 2,
                     display: { xs: 'center', md: 'flex' },
                     borderRadius: '40px',
-                    backgroundColor: isClicked.flag ? '#c2c2c2' :'white',
+                    backgroundColor: isClicked.flag ? '#c2c2c2' : 'white',
                     borderWidth: '3px',
                     borderColor: '#606060',
                     borderStyle: 'solid',
@@ -77,7 +79,7 @@ export default function SearchBar() {
                     height: '60px',
 
                     '&:hover': {
-                        backgroundColor: isClicked.flag ? '#c2c2c2' :'white',
+                        backgroundColor: isClicked.flag ? '#c2c2c2' : 'white',
                         borderColor: 'black',
                         borderWidth: '3px',
                     },
@@ -94,12 +96,12 @@ export default function SearchBar() {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: isClicked.id === 1 && 'white', 
+                            backgroundColor: isClicked.id === 1 && 'white',
                             boxShadow: isClicked.id === 1 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 1 ? 'white' : 'grey' },
-                            
+
                         }}
-                        onClick={()=> setIsClicked({id: 1, flag: true})}
+                        onClick={()=> props.setShowCountry(true)}
                     >
                         <Typography
                             color="black"
@@ -107,7 +109,7 @@ export default function SearchBar() {
                                 fontWeight: 'bold',
                                 fontSize: '13px',
                                 mb: '5px', // Adds margin bottom of 5px
-                                
+
                             }}
                         >
                             Where
@@ -123,7 +125,7 @@ export default function SearchBar() {
                             Destination search
                         </Typography>
                     </Button>
-                   
+
 
                     <Button id="2"
                         sx={{
@@ -133,11 +135,11 @@ export default function SearchBar() {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: isClicked.id === 2 && 'white', 
+                            backgroundColor: isClicked.id === 2 && 'white',
                             boxShadow: isClicked.id === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 2 ? 'white' : 'grey' },
                         }}
-                        onClick={()=> setIsClicked({id: 2, flag: true})}
+                        onClick={() => setIsClicked({ id: 2, flag: true })}
                     >
                         <Typography
                             color="black"
@@ -168,11 +170,11 @@ export default function SearchBar() {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: isClicked.id === 3 && 'white', 
+                            backgroundColor: isClicked.id === 3 && 'white',
                             boxShadow: isClicked.id === 3 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 3 ? 'white' : 'grey' },
                         }}
-                        onClick={()=> setIsClicked({id: 3, flag: true})}
+                        onClick={() => setIsClicked({ id: 3, flag: true })}
                     >
                         <Typography
                             color="black"
@@ -204,10 +206,10 @@ export default function SearchBar() {
                             justifyContent: 'center',
                             alignItems: 'center',
                             backgroundColor: isClicked.id === 4 && 'white',
-                            boxShadow: isClicked.id === 4 && '0px 8px 12px rgba(0, 0, 0, 0.4)', 
-                            '&:hover': { backgroundColor: isClicked.id === 3 ? 'white' : 'grey' },
+                            boxShadow: isClicked.id === 4 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
+                            '&:hover': { backgroundColor: isClicked.id === 4 ? 'white' : 'grey' },
                         }}
-                        onClick={() => setIsClicked({id: 4, flag: true})}
+                        onClick={() => setIsClicked({ id: 4, flag: true })}
                     >
                         <Typography
                             color="black"
@@ -244,8 +246,12 @@ export default function SearchBar() {
                         </Typography>
                     </Button>
 
+
                 </Box >
             }
-        </>
+            
+            
+          
+        </> 
     )
 }
