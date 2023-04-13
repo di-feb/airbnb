@@ -15,7 +15,7 @@ export default function Logo(props) {
     return (
         <img src={require('./images/logo.png')}
             alt="logo" 
-            style={{ display: 'flex', maxWidth: '100px', maxHeight: '100px', marginTop: "-7px"}}
+            style={{ display: 'flex', maxWidth: '100px', maxHeight: '100px', marginTop: "-7px", cursor: 'pointer'}}
             onClick={() => setCount(prevCount => prevCount + 1)}
         />
         
