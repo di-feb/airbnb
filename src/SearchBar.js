@@ -101,7 +101,7 @@ export default function SearchBar(props) {
                             '&:hover': { backgroundColor: isClicked.id === 1 ? 'white' : 'grey' },
 
                         }}
-                        onClick={()=> props.setShowCountry(true)}
+                        onClick={()=> {props.setShowCountry(1);  setIsClicked({ id: 1, flag: true });} }
                     >
                         <Typography
                             color="black"
@@ -139,7 +139,7 @@ export default function SearchBar(props) {
                             boxShadow: isClicked.id === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 2 ? 'white' : 'grey' },
                         }}
-                        onClick={() => setIsClicked({ id: 2, flag: true })}
+                        onClick={()=> {props.setShowCountry(2);  setIsClicked({ id: 2, flag: true });} }
                     >
                         <Typography
                             color="black"
@@ -174,7 +174,7 @@ export default function SearchBar(props) {
                             boxShadow: isClicked.id === 3 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 3 ? 'white' : 'grey' },
                         }}
-                        onClick={() => setIsClicked({ id: 3, flag: true })}
+                        onClick={()=> {props.setShowCountry(3);  setIsClicked({ id: 3, flag: true });} }
                     >
                         <Typography
                             color="black"
@@ -209,7 +209,7 @@ export default function SearchBar(props) {
                             boxShadow: isClicked.id === 4 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 4 ? 'white' : 'grey' },
                         }}
-                        onClick={() => setIsClicked({ id: 4, flag: true })}
+                        onClick={()=> {props.setShowCountry(4);  setIsClicked({ id: 4, flag: true });} }
                     >
                         <Typography
                             color="black"
