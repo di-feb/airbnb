@@ -7,12 +7,28 @@ export default function Country() {
     return (
         <Autocomplete
             id="country-select-demo"
-            sx={{ width: 250 }}
+            sx={{
+                width: 250,                
+                ml: '30px',
+                mt: '10px',
+                maxHeight: 100,
+                "& .MuiInputBase-root": {
+                    borderRadius: "50px !important",
+                    width: "400px"
+                },
+            }}
             options={listOfCountries.countries}
             autoHighlight
             getOptionLabel={(option) => option.label}
             renderOption={(props, option) => (
-                <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 1 } }} {...props}>
+                <Box component="li"
+                    sx={{
+                        '& > img': { mr: 2, flexShrink: 1 },
+                        
+
+                    }}
+                    {...props}
+                >
                     <img
                         loading="lazy"
                         width="20"
@@ -24,14 +40,15 @@ export default function Country() {
             )}
             renderInput={(params) => (
                 <TextField
-                    
+
                     {...params}
                     label="Choose a country"
                     inputProps={{
                         ...params.inputProps,
                         autoComplete: 'new-password', // disable autocomplete and autofill
-                        
+
                     }}
+
                 />
             )}
         />

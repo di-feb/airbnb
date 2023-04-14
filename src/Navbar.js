@@ -7,6 +7,8 @@ import Button from '@mui/material/Button';
 import Logo from './Logo';
 import SearchBar from './SearchBar';
 import Country from './Country';
+import DateCalendarValue from './DateCalenderValue';
+import { TextField } from '@mui/material';
 
 export default function Navbar() {
     const [showCountry, setShowCountry] = React.useState(0);
@@ -14,7 +16,7 @@ export default function Navbar() {
     return (
         <>
             <AppBar sx={{ backgroundColor: 'white' }} position="static">
-                <Container maxWidth="xl">
+                <Container maxWidth="xxl">
                     <Toolbar disableGutters style={{ display: 'flex', justifyContent: 'space-between' }}>
 
                         {/* Logo */}
@@ -44,31 +46,115 @@ export default function Navbar() {
                     </Toolbar>
                 </Container>
             </AppBar>
+
             {showCountry === 1 &&
-                <Container sx={{
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start',
+                    mt: '20px',
+                    ml: '180px',
+                    width: '500px',
+                    height: '180px',
+                    borderWidth: '1',
+                    borderRadius: '50px',
+                    backgroundColor: 'white',
+                    boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)'
+                }}>
+                    <Country />
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mt: '20px',
+                        ml: '20px',
+                        width: '460px',
+                    }}>
+                        <TextField id="city"
+                            label="Choose a city"
+                            variant="outlined"
+                            sx={{
+                                "& .MuiInputBase-root": {
+                                    borderRadius: "50px !important",
+                                },
+                            }} />
+                        <TextField id="district"
+                            label="Choose a district"
+                            variant="outlined"
+                            sx={{
+                                "& .MuiInputBase-root": {
+                                    borderRadius: "50px !important",
+                                },
+                            }} />
+                    </Box>
+                </Box>
+            }
+            {((showCountry === 2) || (showCountry === 3)) &&
+                <Box sx={{
                     display: 'flex',
                     mt: '20px',
-                    ml: '290px',
-                    
-                    
+                    ml: '350px',
+                    width: '640px',
+                    height: '350px',
+                    borderWidth: '1px',
+                    borderRadius: '50px',
+                    backgroundColor: 'white',
+                    boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)'
                 }}>
-
-                    <Country />
-                </Container>
-                // <Box sx={{
-                //     display:'flex',
-                //     mt: '20px',
-                //     ml: '250px',
-                //     width: '350px',
-                //     height: '300px',
-                //     borderWidth: '1',
-                //     borderRadius: '16px',
-                //     backgroundColor: 'white',
-                //     boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)'
-                // }}>
-                // </Box>
+                    <DateCalendarValue />
+                    <DateCalendarValue />
+                </Box>
             }
 
+            {showCountry === 4 &&
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    mt: '20px',
+                    ml: '720px',
+                    width: '340px',
+                    height: '350px',
+                    borderWidth: '1px',
+                    borderRadius: '50px',
+                    backgroundColor: 'white',
+                    boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)'
+                }}>
+                    <TextField id="city"
+                        label="Number of Adults"
+                        variant="outlined"
+                        
+                    sx={{
+                        "& .MuiInputBase-root": {
+                            borderRadius: "50px !important",
+                        },
+                        margin: "20px 10px "
+                    }} 
+                        />
+                    <TextField id="district"
+                        label="Number of children"
+                        variant="outlined"
+
+                        sx={{
+                            "& .MuiInputBase-root": {
+                                borderRadius: "50px !important",
+                            },
+                            margin: "20px 10px "
+                        }}
+                    />
+
+                    <TextField id="district"
+                        label="Number of pets"
+                        variant="outlined"
+
+                        sx={{
+                            "& .MuiInputBase-root": {
+                                borderRadius: "50px !important",
+                            },
+                            margin: "20px 10px "
+                        }}
+                    />
+                </Box>
+            }
         </>
     );
 }
