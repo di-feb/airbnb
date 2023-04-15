@@ -14,6 +14,8 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from './Navbar'
 import Footer from './Footer'
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import Role from './Role';
 
 
 const theme = createTheme();
@@ -32,11 +34,12 @@ export default function SignUp() {
         <div>
             <Navbar />
             <ThemeProvider theme={theme}>
-                <Container component="main" maxWidth="xs">
+                <Container component="main" maxWidth="xs" >
                     <CssBaseline />
                     <Box
                         sx={{
-                            marginTop: 8,
+                            mt: 5,
+                            mb: 5,
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
@@ -48,8 +51,43 @@ export default function SignUp() {
                         <Typography component="h1" variant="h5">
                             Sign up
                         </Typography>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                mt: 3,
+                                width: "130px",
+                                height: "130px",
+                                bgcolor: "black",
+                                borderRadius: "100%"
+                            }}
+                        >
+                            <Button
+                                variant="contained"
+                                endIcon={<PhotoCamera />}
+                                sx={{
+                                    minWidth: '25px',
+                                    minHeight: '25px',
+                                    mt: '110px',
+                                    ml: '23px'
+                                }}
+
+                            >
+                                Add
+                            </Button>
+                        </Box >
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        autoComplete="given-name"
+                                        name="userName"
+                                        required
+                                        fullWidth
+                                        id="userName"
+                                        label="Username"
+                                        autoFocus
+                                    />
+                                </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         autoComplete="given-name"
@@ -83,14 +121,41 @@ export default function SignUp() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        type='number'
+                                        required
+                                        fullWidth
+                                        id="phone"
+                                        label="Phone Number"
+                                        name="phone"
+                                        inputProps={{
+                                            pattern: "[0-9]*", // only allow numbers
+                                            inputMode: "numeric", // show numeric keyboard on mobile devices
+                                            min: 0
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
                                         required
                                         fullWidth
                                         name="password"
                                         label="Password"
                                         type="password"
                                         id="password"
-                                        autoComplete="new-password"
                                     />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        name="validPassword"
+                                        label="Password Validation"
+                                        type="password"
+                                        id="validPassword"
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Role />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <FormControlLabel
@@ -117,7 +182,7 @@ export default function SignUp() {
                         </Box>
                     </Box>
                     <Footer />
-                </Container>
+                </Container >
             </ThemeProvider>
         </div>
     );

@@ -119,20 +119,26 @@ export default function Navbar() {
                     backgroundColor: 'white',
                     boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)'
                 }}>
-                    <TextField id="city"
+                    <TextField
+                        id="adults"
+                        type='number'
                         label="Number of Adults"
                         variant="outlined"
-                        
-                    sx={{
-                        "& .MuiInputBase-root": {
-                            borderRadius: "50px !important",
-                        },
-                        margin: "20px 10px "
-                    }} 
-                        />
-                    <TextField id="district"
+                        inputProps= {{ min: 0 }}
+
+                        sx={{
+                            "& .MuiInputBase-root": {
+                                borderRadius: "50px !important",
+                            },
+                            margin: "20px 10px "
+                        }}
+                    />
+                    <TextField
+                        id="children"
+                        type='number'
                         label="Number of children"
                         variant="outlined"
+                        inputProps= {{ min: 0 }}
 
                         sx={{
                             "& .MuiInputBase-root": {
@@ -142,9 +148,12 @@ export default function Navbar() {
                         }}
                     />
 
-                    <TextField id="district"
+                    <TextField
+                        id="pets"
+                        type='number'
                         label="Number of pets"
                         variant="outlined"
+                        inputProps= {{ min: 0 }}
 
                         sx={{
                             "& .MuiInputBase-root": {
