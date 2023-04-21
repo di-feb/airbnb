@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import Country from './Country';
+import Main from './Main';
 
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      
+      <Main />
       <Footer />
     </>
   );

@@ -1,26 +1,22 @@
 import React from 'react';
 import { Box } from '@mui/material';
-
-import SearchIcon from '@mui/icons-material/Search';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
-
-// import { LocalizationProvider } from '@mui/x-date-pickers';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import SearchIcon from '@mui/icons-material/Search';
 
 
 export default function SearchBar(props) {
 
-    const [openMenu, setOpenMenu] = React.useState(false);
+    const [openMenu, setOpenMenu] = React.useState(0);
     const [isClicked, setIsClicked] = React.useState({
         id: 0,
         flag: false
     });
-    console.log(isClicked.id)
-    
+
+
     return (
         <>
-            {!openMenu &&
+            {openMenu === 0 &&
                 <Box sx={{ flexGrow: 1, display: { xs: 'center', md: 'flex' } }}>
                     <Button
                         variant="outlined"
@@ -42,7 +38,7 @@ export default function SearchBar(props) {
                             },
 
                         }}
-                        onClick={() => setOpenMenu(true)}
+                        onClick={() => setOpenMenu(1)}
                         endIcon={ // icon goes to the right side of the button
                             <SearchIcon
                                 sx={{
@@ -60,9 +56,10 @@ export default function SearchBar(props) {
                         </Typography>
 
                     </Button >
-                </Box >}
+                </Box >
+            }
 
-            {openMenu &&
+            {openMenu === 1 &&
 
                 <Box sx={{
                     mr: '200px',
@@ -101,7 +98,7 @@ export default function SearchBar(props) {
                             '&:hover': { backgroundColor: isClicked.id === 1 ? 'white' : 'grey' },
 
                         }}
-                        onClick={()=> {props.setShowCountry(1);  setIsClicked({ id: 1, flag: true });} }
+                        onClick={() => { props.setShowCountry(1); setIsClicked({ id: 1, flag: true }); }}
                     >
                         <Typography
                             color="black"
@@ -139,7 +136,7 @@ export default function SearchBar(props) {
                             boxShadow: isClicked.id === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 2 ? 'white' : 'grey' },
                         }}
-                        onClick={()=> {props.setShowCountry(2);  setIsClicked({ id: 2, flag: true });} }
+                        onClick={() => { props.setShowCountry(2); setIsClicked({ id: 2, flag: true }); }}
                     >
                         <Typography
                             color="black"
@@ -174,7 +171,7 @@ export default function SearchBar(props) {
                             boxShadow: isClicked.id === 3 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 3 ? 'white' : 'grey' },
                         }}
-                        onClick={()=> {props.setShowCountry(3);  setIsClicked({ id: 3, flag: true });} }
+                        onClick={() => { props.setShowCountry(3); setIsClicked({ id: 3, flag: true }); }}
                     >
                         <Typography
                             color="black"
@@ -209,7 +206,7 @@ export default function SearchBar(props) {
                             boxShadow: isClicked.id === 4 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 4 ? 'white' : 'grey' },
                         }}
-                        onClick={()=> {props.setShowCountry(4);  setIsClicked({ id: 4, flag: true });} }
+                        onClick={() => { props.setShowCountry(4); setIsClicked({ id: 4, flag: true }); }}
                     >
                         <Typography
                             color="black"
@@ -236,22 +233,70 @@ export default function SearchBar(props) {
                         minWidth: '20%',
                         borderRadius: '30px',
                         backgroundImage: 'linear-gradient(to right, #d70000, #ff2615, #ff5a3c)',
-
+                        '&:hover': { backgroundImage: 'linear-gradient(to right, hsl(0, 80%, 35%), hsl(5, 80%, 40%), hsl(10, 80%, 50%))' }
 
                     }}
+                        onClick={()=> setOpenMenu(2)}
                         endIcon={<SearchIcon sx={{ color: 'white' }} />}
                     >
-                        <Typography color="white" fontWeight='600'>
+                        <Typography
+                            color="white"
+                            fontWeight='600'
+                        >
                             Search
                         </Typography>
+
                     </Button>
 
 
                 </Box >
             }
-            
-            
-          
-        </> 
+
+            {openMenu === 2 &&
+                <Box sx={{ flexGrow: 1, display: { xs: 'center', md: 'flex' } }}>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            borderRadius: '40px',
+                            backgroundColor: 'white',
+                            borderWidth: '1px',
+                            borderColor: '#606060',
+                            borderStyle: 'solid',
+
+                            transition: 'all 0.1s ease',
+                            minWidth: '250px',
+                            textTransform: 'none',
+
+                            '&:hover': {
+                                backgroundColor: '#dedede',
+                                borderColor: 'black',
+                                borderWidth: '2px',
+                            },
+
+                        }}
+                        onClick={() => setOpenMenu(1)}
+                        endIcon={ // icon goes to the right side of the button
+                            <SearchIcon
+                                sx={{
+                                    backgroundColor: 'red',
+                                    borderRadius: '50%',
+                                    padding: '4px',
+                                    color: 'white',
+                                }}
+                            />
+                        }
+                    >
+
+                        <Typography color="grey" fontWeight={'400'} >
+                            Search for accomondation
+                        </Typography>
+
+                    </Button >
+                </Box >
+            }
+
+
+
+        </>
     )
 }

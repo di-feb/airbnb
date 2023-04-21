@@ -23,7 +23,6 @@ export default function Role() {
                     label="Role"
                     onChange={handleChange}
                 >
-                    <MenuItem value={"Admin"}>Admin</MenuItem>
                     <MenuItem value={'Host'}>Host</MenuItem>
                     <MenuItem value={'Tenant'}>Tenant</MenuItem>
                 </Select>

@@ -6,7 +6,7 @@ import Copyright from './Copyright';
 export default function Footer() {
     return (
 
-        <Box sx={{ display: 'flex', position: 'relative'}}>
+        <Box sx={{ display: 'flex', position: 'relative', mt:"10px"}}>
             <Box
                 component="footer"
                 sx={{
@@ -14,12 +14,9 @@ export default function Footer() {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    py: 2.5,
+                    py: 1.5,
+                    backgroundColor: "#c2c2c2",
                     
-                    backgroundColor: (theme) =>
-                        theme.palette.mode === 'light'
-                            ? theme.palette.grey[400]
-                            : theme.palette.grey[800],
                 }}
             >
                 <Copyright />
