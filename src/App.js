@@ -5,7 +5,9 @@ import SignUp from './SignUp';
 import Login from './Login';
 import Home from './Home';
 import Host from "./Host";
+import CardDetails from "./CardDetails";
 import "./css/style.css"
+import Accomondation from "./Accomondation";
 
 
 export default function App() {
@@ -21,6 +23,7 @@ export default function App() {
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/host" element={<Host />} />
+                    <Route path="/accomondation" element={<Accomondation />} />
                 </Routes>
             </Router>
             {currentPath}

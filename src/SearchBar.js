@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-
+import {Divider} from '@mui/material';
 
 export default function SearchBar(props) {
 
@@ -12,6 +12,56 @@ export default function SearchBar(props) {
         id: 0,
         flag: false
     });
+
+    const [openCheckIn, setOpenCheckIn] = React.useState(false);
+    const [openCheckOut, setOpenCheckOut] = React.useState(false);
+
+    const where = function(flag){
+        if(props.country === "" && !props.city && !props.district){
+            return (flag ? "Anywhere " :"Destination search")
+        }
+        else if(props.country !== "" && !props.city && !props.district){
+            return (props.country)
+        }
+        else if(props.country === "" && props.city && !props.district){
+            return (props.city)
+        }
+        else if(props.country === "" && !props.city && props.district){
+            return (props.district)
+        }
+        else if(props.country !== "" && props.city && !props.district){
+            return (`${props.country}, ${props.city}`)
+        }
+        else if(props.country !== "" && !props.city && props.district){
+            return (`${props.country}, ${props.district}`)
+        }
+        else if(props.country === "" && props.city && props.district){
+            return (`${props.city}, ${props.district}`)
+        }
+        else{
+            return (`${props.country}, ${props.city}, ${props.district}`)
+        }
+
+    }
+
+    const who = function(){
+        if(!props.adults && !props.children && !props.pets){
+            return ("Add Guests")
+        }
+        else if(props.adults && !props.children && !props.pets){
+            return (`Adults:${props.adults}`)
+        }      
+        else if(props.adults && props.children && !props.pets){
+            return (`Adults:${props.adults}, Children:${props.children}`)
+        }
+        else if(props.adults && !props.children && props.pets){
+            return (`Adults:${props.adults}, Pets:${props.pets}`)
+        }
+        else if(props.adults && props.children && props.pets){
+            return (`Adults:${props.adults}, Children:${props.children}, Pets:${props.pets}`)
+        }
+
+    }
 
 
     return (
@@ -32,7 +82,7 @@ export default function SearchBar(props) {
                             textTransform: 'none',
 
                             '&:hover': {
-                                backgroundColor: '#dedede',
+                                backgroundColor: '#ededed',
                                 borderColor: 'black',
                                 borderWidth: '2px',
                             },
@@ -51,7 +101,7 @@ export default function SearchBar(props) {
                         }
                     >
 
-                        <Typography color="grey" fontWeight={'400'} >
+                        <Typography color="#414141" fontWeight={'400'} >
                             Search for accomondation
                         </Typography>
 
@@ -119,7 +169,8 @@ export default function SearchBar(props) {
                                 textAlign: 'center',
                             }}
                         >
-                            Destination search
+                            {where(false)}
+                            
                         </Typography>
                     </Button>
 
@@ -136,7 +187,7 @@ export default function SearchBar(props) {
                             boxShadow: isClicked.id === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 2 ? 'white' : 'grey' },
                         }}
-                        onClick={() => { props.setShowCountry(2); setIsClicked({ id: 2, flag: true }); }}
+                        onClick={() => { props.setShowCountry(2); setIsClicked({ id: 2, flag: true }); setOpenCheckIn(true); }}
                     >
                         <Typography
                             color="black"
@@ -156,7 +207,7 @@ export default function SearchBar(props) {
                                 textAlign: 'center',
                             }}
                         >
-                            Add dates
+                            {!openCheckIn && !openCheckOut? "Add dates" : props.checkIn}
                         </Typography>
                     </Button>
                     <Button id="3"
@@ -171,7 +222,7 @@ export default function SearchBar(props) {
                             boxShadow: isClicked.id === 3 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 3 ? 'white' : 'grey' },
                         }}
-                        onClick={() => { props.setShowCountry(3); setIsClicked({ id: 3, flag: true }); }}
+                        onClick={() => { props.setShowCountry(3); setIsClicked({ id: 3, flag: true }); setOpenCheckOut(true); }}
                     >
                         <Typography
                             color="black"
@@ -191,7 +242,7 @@ export default function SearchBar(props) {
                                 textAlign: 'center',
                             }}
                         >
-                            Add dates
+                            {!openCheckOut && !openCheckIn ? "Add dates" : props.checkOut}
                         </Typography>
                     </Button>
                     <Button id="4"
@@ -226,7 +277,7 @@ export default function SearchBar(props) {
                                 textAlign: 'center',
                             }}
                         >
-                            Add guests
+                            {who()}
                         </Typography>
                     </Button>
                     <Button sx={{
@@ -287,9 +338,14 @@ export default function SearchBar(props) {
                         }
                     >
 
-                        <Typography color="grey" fontWeight={'400'} >
-                            Search for accomondation
-                        </Typography>
+                        <Typography color="black" fontSize={'12px'} > {where(true)} </Typography>
+                        <Divider orientation="vertical" variant="middle" flexItem sx={{ borderRightWidth: 1, borderColor: '#606060', ml:1, mr:1 }} />
+
+                        <Typography color="black" fontSize={'12px'} > {props.checkIn} - {props.checkOut} </Typography>
+                        <Divider orientation="vertical" variant="middle" flexItem sx={{ borderRightWidth: 1, borderColor: '#606060', ml:1, mr:1 }}/>
+
+                        <Typography color="black" fontSize={'12px'} > {who()} </Typography>
+                        
 
                     </Button >
                 </Box >

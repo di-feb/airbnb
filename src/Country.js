@@ -1,14 +1,20 @@
+import React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import listOfCountries from './countries'
 import { TextField } from '@mui/material';
 import { Box } from '@mui/material';
 
-export default function Country() {
+export default function Country(props) {
+
+    
     return (
         <Autocomplete
-            id="country-select-demo"
+            id="country"
+            value={props.value}
+            onChange={props.onChange}
+            
             sx={{
-                width: 250,                
+                width: 250,
                 ml: '30px',
                 mt: '10px',
                 maxHeight: 100,
@@ -22,11 +28,7 @@ export default function Country() {
             getOptionLabel={(option) => option.label}
             renderOption={(props, option) => (
                 <Box component="li"
-                    sx={{
-                        '& > img': { mr: 2, flexShrink: 1 },
-                        
-
-                    }}
+                    sx={{ '& > img': { mr: 2, flexShrink: 1 }}}
                     {...props}
                 >
                     <img
@@ -48,7 +50,6 @@ export default function Country() {
                         autoComplete: 'new-password', // disable autocomplete and autofill
 
                     }}
-
                 />
             )}
         />

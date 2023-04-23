@@ -7,22 +7,32 @@ import Button from '@mui/material/Button';
 import Logo from './Logo';
 import SearchBar from './SearchBar';
 import Country from './Country';
-import DateCalendarValue from './DateCalenderValue';
-import { TextField } from '@mui/material';
+import { Divider, TextField } from '@mui/material';
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 
 export default function Navbar() {
     const [showCountry, setShowCountry] = React.useState(0);
+
+    const now = new Date(Date.now());
+    const today = dayjs(new Date().toString());
+    const nextMonth = dayjs(new Date(now.getFullYear(), now.getMonth() + 1, 1));
+
     const [data, setData] = React.useState({
-        country: "",
-        city: "",
-        district: "",
-        checkIn: "",
-        checkOut: "",
+        country: { code: '', label: '', phone: '' },
+        city: null,
+        district: null,
+        checkIn: today,
+        checkOut: nextMonth,
         numOfAdults: 0,
         numOfChildren: 0,
-        numofPets: 0,
+        numOfPets: 0,
     });
+
+
 
     function handleChange(event) {
         const { name, value } = event.target
@@ -33,6 +43,13 @@ export default function Navbar() {
             }
         })
     }
+
+    const handleCountryChange = (event, newValue) => {
+        setData({ ...data, country: newValue });
+
+    };
+
+
 
 
 
@@ -46,9 +63,22 @@ export default function Navbar() {
                         <Logo />
 
                         {/* Search Bar */}
-                        <SearchBar setShowCountry={setShowCountry} />
+                        <SearchBar
+                            setShowCountry={setShowCountry}
+                            country={data.country.label}
+                            city={data.city}
+                            district={data.district}
+                            adults={data.numOfAdults}
+                            children={data.numOfChildren}
+                            pets={data.numOfPets}
+                            checkIn={data.checkIn.format('ddd MMM DD').substring(0, 11)}
+                            checkOut={data.checkOut.format('ddd MMM DD').substring(0, 11)}
+                            checkInClicked={showCountry}
+                            checkOutClicked={showCountry}
+                        />
 
-                        <Button href="/host"
+                        <Button
+                            href="/host"
                             variant="outlined"
                             size="small"
                             sx={{
@@ -101,7 +131,10 @@ export default function Navbar() {
                         boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
 
                     }}>
-                    <Country />
+                    <Country
+                        value={data.country}
+                        onChange={handleCountryChange}
+                    />
                     <Box sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -151,8 +184,10 @@ export default function Navbar() {
                     backgroundColor: 'white',
                     boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)'
                 }}>
-                    <DateCalendarValue checkIn={true} />
-                    <DateCalendarValue checkIn={false} />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateCalendar value={data.checkIn} onChange={(newValue) => setData({ ...data, checkIn: newValue })} minDate={today} />
+                        <DateCalendar value={data.checkOut} onChange={(newValue) => setData({ ...data, checkOut: newValue })} minDate={today} />
+                    </LocalizationProvider>
                 </Box>
             }
 
@@ -188,10 +223,11 @@ export default function Navbar() {
                             margin: "20px 10px "
                         }}
                     />
+                    <Divider />
                     <TextField
                         id="children"
                         type='number'
-                        label="Number of children"
+                        label="Number of Children"
                         variant="outlined"
                         value={data.numOfChildren}
                         name="numOfChildren"
@@ -205,13 +241,13 @@ export default function Navbar() {
                             margin: "20px 10px "
                         }}
                     />
-
+                    <Divider />
                     <TextField
                         id="pets"
                         type='number'
-                        label="Number of pets"
+                        label="Number of Pets"
                         variant="outlined"
-                        value={data.numofPets}
+                        value={data.numOfPets}
                         name="numOfPets"
                         onChange={handleChange}
                         inputProps={{ min: 0 }}
