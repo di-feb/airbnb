@@ -15,12 +15,14 @@ export default function Country(props) {
             
             sx={{
                 width: 250,
-                ml: '30px',
-                mt: '10px',
+                mt:'10px',
+                ml:'20px',
+                mr:'10px',
+                
                 maxHeight: 100,
                 "& .MuiInputBase-root": {
                     borderRadius: "50px !important",
-                    width: "400px"
+                    width: "460px"
                 },
             }}
             options={listOfCountries.countries}

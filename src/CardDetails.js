@@ -24,6 +24,7 @@ import Select from '@mui/material/Select';
 import { TextField } from '@mui/material';
 import { FormControl } from '@mui/material';
 import { Input } from '@mui/material';
+import {Container} from '@mui/material';
 
 export default function CardDetails(props) {
 
@@ -41,7 +42,7 @@ export default function CardDetails(props) {
         pets: 0,
     });
 
-    const [selectValue, setSelectValue] = React.useState("Guests");
+    const [guestButton, setGuestButton] = React.useState(false);
 
     function handleChange(event) {
         const { name, value } = event.target
@@ -53,20 +54,20 @@ export default function CardDetails(props) {
         })
     }
 
-    const who = function(){
-        if(!guests.adults && !guests.children && !guests.pets){
+    const who = function () {
+        if (!guests.adults && !guests.children && !guests.pets) {
             return ("Guests")
         }
-        else if(guests.adults && !guests.children && !guests.pets){
+        else if (guests.adults && !guests.children && !guests.pets) {
             return (`Adults:${guests.adults}`)
-        }      
-        else if(guests.adults && guests.children && !guests.pets){
+        }
+        else if (guests.adults && guests.children && !guests.pets) {
             return (`Adults:${guests.adults}, Children:${guests.children}`)
         }
-        else if(guests.adults && !guests.children && guests.pets){
+        else if (guests.adults && !guests.children && guests.pets) {
             return (`Adults:${guests.adults}, Pets:${guests.pets}`)
         }
-        else if(guests.adults && guests.children && guests.pets){
+        else if (guests.adults && guests.children && guests.pets) {
             return (`Adults:${guests.adults}, Children:${guests.children}, Pets:${guests.pets}`)
         }
 
@@ -205,7 +206,7 @@ export default function CardDetails(props) {
                         display: 'flex',
                         flexDirection: 'column',
                         width: '300px',
-                        height: '300px',
+                        height: '350px',
                         position: 'absolute',
                         bgcolor: 'white',
                         borderWidth: '1px',
@@ -248,14 +249,49 @@ export default function CardDetails(props) {
                             />
                         </LocalizationProvider>
                     </Box>
-                    
-                        <Select 
-                            value={selectValue}
-                            label="Age"
-                            onChange={()=> setSelectValue({who})}
-                            size='small'
-                            sx={{margin: "10px"}}
-                        
+
+                    <Button
+                        variant='outlined'
+                        onClick={() => setGuestButton((prev) => (!prev))}
+                        size='small'
+                        sx={{
+                            margin: "10px",
+                            color: "black",
+                            borderColor: '#dedede',
+                            textTransform: 'none !important',
+                            justifyContent: 'flex-start',
+                            '&:hover': {
+                                color: 'black',
+                                backgroundColor: 'white',
+                                borderColor: 'black',
+                            },
+                        }}
+
+
+                    >
+                        {who()}
+                       
+                    </Button>
+
+
+                    {guestButton &&
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                position: 'absolute',
+                                mt: '150px',
+                                ml: '10px',
+                                mr: '10px',
+                                width: '280px',
+                                height: '250px',
+                                borderRadius: '15px',
+                                borderColor: 'black',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                backgroundColor: 'white',
+
+                            }}
                         >
                             <TextField
                                 id="adults"
@@ -298,9 +334,45 @@ export default function CardDetails(props) {
 
                                 sx={{ margin: "20px 10px" }}
                             />
-                            {who()}
-                        </Select>
-                    
+
+                        </Box>
+                    }
+
+                    <Button
+                        variant='contained'
+                        sx={{
+                            margin: "10px",
+                            backgroundImage: 'linear-gradient(to right, #d70000, #ff2615, #ff5a3c)',
+                            borderColor: 'black',
+                            textTransform: 'none !important',
+                            height: '40px',
+
+                            '&:hover': {
+                                color: 'black',
+                                backgroundColor: 'white',
+                                borderColor: 'black',
+                            },
+                        }}
+                    >
+                        Reserve
+                    </Button>
+
+                    <Typography sx={{fontSize:'12px', ml:'80px'}}> You won't be charged yet </Typography>
+                    <Box sx={{ display: "flex", flexDirection: 'row' }}>
+                        <Typography sx={{fontSize:'13px', ml:'20px', mt:'20px'}}> ${props.price} x 7 nights </Typography>   
+                        <Typography sx={{fontSize:'13px', ml:'120px', mt:'20px'}}> $ 3500 </Typography> 
+                    </Box>
+                    <Container sx={{ display: "flex", flexDirection: 'row' }}>
+                        <Typography sx={{fontSize:'13px'}}> Airbnb service free </Typography>    
+                        <Typography sx={{fontSize:'13px', ml:'93px'}}> $ 613 </Typography>
+                    </Container>
+
+                    <Divider variant="middle" sx={{mt:2}}/>
+
+                    <Box sx={{ display: "flex", flexDirection: 'row', margin: '20px' }}>
+                        <Typography sx={{fontSize:'13px', fontWeight:'bold'}}> Total </Typography>
+                        <Typography sx={{fontSize:'13px', ml:'180px', fontWeight:'bold'}}> $ 4113 </Typography>
+                    </Box>
                 </Box>
             </Box >
         </>

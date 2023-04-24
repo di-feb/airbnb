@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import {Divider} from '@mui/material';
+import { Divider } from '@mui/material';
 
 export default function SearchBar(props) {
 
@@ -16,48 +16,48 @@ export default function SearchBar(props) {
     const [openCheckIn, setOpenCheckIn] = React.useState(false);
     const [openCheckOut, setOpenCheckOut] = React.useState(false);
 
-    const where = function(flag){
-        if(props.country === "" && !props.city && !props.district){
-            return (flag ? "Anywhere " :"Destination search")
+    const where = function (flag) {
+        if (props.country === "" && !props.city && !props.district) {
+            return (flag ? "Anywhere " : "Destination search")
         }
-        else if(props.country !== "" && !props.city && !props.district){
+        else if (props.country !== "" && !props.city && !props.district) {
             return (props.country)
         }
-        else if(props.country === "" && props.city && !props.district){
+        else if (props.country === "" && props.city && !props.district) {
             return (props.city)
         }
-        else if(props.country === "" && !props.city && props.district){
+        else if (props.country === "" && !props.city && props.district) {
             return (props.district)
         }
-        else if(props.country !== "" && props.city && !props.district){
+        else if (props.country !== "" && props.city && !props.district) {
             return (`${props.country}, ${props.city}`)
         }
-        else if(props.country !== "" && !props.city && props.district){
+        else if (props.country !== "" && !props.city && props.district) {
             return (`${props.country}, ${props.district}`)
         }
-        else if(props.country === "" && props.city && props.district){
+        else if (props.country === "" && props.city && props.district) {
             return (`${props.city}, ${props.district}`)
         }
-        else{
+        else {
             return (`${props.country}, ${props.city}, ${props.district}`)
         }
 
     }
 
-    const who = function(){
-        if(!props.adults && !props.children && !props.pets){
+    const who = function () {
+        if (!props.adults && !props.children && !props.pets) {
             return ("Add Guests")
         }
-        else if(props.adults && !props.children && !props.pets){
+        else if (props.adults && !props.children && !props.pets) {
             return (`Adults:${props.adults}`)
-        }      
-        else if(props.adults && props.children && !props.pets){
+        }
+        else if (props.adults && props.children && !props.pets) {
             return (`Adults:${props.adults}, Children:${props.children}`)
         }
-        else if(props.adults && !props.children && props.pets){
+        else if (props.adults && !props.children && props.pets) {
             return (`Adults:${props.adults}, Pets:${props.pets}`)
         }
-        else if(props.adults && props.children && props.pets){
+        else if (props.adults && props.children && props.pets) {
             return (`Adults:${props.adults}, Children:${props.children}, Pets:${props.pets}`)
         }
 
@@ -146,7 +146,7 @@ export default function SearchBar(props) {
                             backgroundColor: isClicked.id === 1 && 'white',
                             boxShadow: isClicked.id === 1 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 1 ? 'white' : 'grey' },
-
+                            textTransform: 'none !important',
                         }}
                         onClick={() => { props.setShowCountry(1); setIsClicked({ id: 1, flag: true }); }}
                     >
@@ -170,7 +170,7 @@ export default function SearchBar(props) {
                             }}
                         >
                             {where(false)}
-                            
+
                         </Typography>
                     </Button>
 
@@ -186,6 +186,7 @@ export default function SearchBar(props) {
                             backgroundColor: isClicked.id === 2 && 'white',
                             boxShadow: isClicked.id === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 2 ? 'white' : 'grey' },
+                            textTransform: 'none !important',
                         }}
                         onClick={() => { props.setShowCountry(2); setIsClicked({ id: 2, flag: true }); setOpenCheckIn(true); }}
                     >
@@ -207,7 +208,7 @@ export default function SearchBar(props) {
                                 textAlign: 'center',
                             }}
                         >
-                            {!openCheckIn && !openCheckOut? "Add dates" : props.checkIn}
+                            {!openCheckIn && !openCheckOut ? "Add dates" : props.checkIn}
                         </Typography>
                     </Button>
                     <Button id="3"
@@ -221,6 +222,7 @@ export default function SearchBar(props) {
                             backgroundColor: isClicked.id === 3 && 'white',
                             boxShadow: isClicked.id === 3 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 3 ? 'white' : 'grey' },
+                            textTransform: 'none !important',
                         }}
                         onClick={() => { props.setShowCountry(3); setIsClicked({ id: 3, flag: true }); setOpenCheckOut(true); }}
                     >
@@ -256,6 +258,7 @@ export default function SearchBar(props) {
                             backgroundColor: isClicked.id === 4 && 'white',
                             boxShadow: isClicked.id === 4 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 4 ? 'white' : 'grey' },
+                            textTransform: 'none !important',
                         }}
                         onClick={() => { props.setShowCountry(4); setIsClicked({ id: 4, flag: true }); }}
                     >
@@ -280,14 +283,15 @@ export default function SearchBar(props) {
                             {who()}
                         </Typography>
                     </Button>
-                    <Button sx={{
-                        minWidth: '20%',
-                        borderRadius: '30px',
-                        backgroundImage: 'linear-gradient(to right, #d70000, #ff2615, #ff5a3c)',
-                        '&:hover': { backgroundImage: 'linear-gradient(to right, hsl(0, 80%, 35%), hsl(5, 80%, 40%), hsl(10, 80%, 50%))' }
-
-                    }}
-                        onClick={()=> setOpenMenu(2)}
+                    <Button
+                        sx={{
+                            minWidth: '20%',
+                            borderRadius: '30px',
+                            backgroundImage: 'linear-gradient(to right, #d70000, #ff2615, #ff5a3c)',
+                            '&:hover': { backgroundImage: 'linear-gradient(to right, hsl(0, 80%, 35%), hsl(5, 80%, 40%), hsl(10, 80%, 50%))' },
+                            textTransform: 'none !important',
+                        }}
+                        onClick={() => setOpenMenu(2)}
                         endIcon={<SearchIcon sx={{ color: 'white' }} />}
                     >
                         <Typography
@@ -339,13 +343,13 @@ export default function SearchBar(props) {
                     >
 
                         <Typography color="black" fontSize={'12px'} > {where(true)} </Typography>
-                        <Divider orientation="vertical" variant="middle" flexItem sx={{ borderRightWidth: 1, borderColor: '#606060', ml:1, mr:1 }} />
+                        <Divider orientation="vertical" variant="middle" flexItem sx={{ borderRightWidth: 1, borderColor: '#606060', ml: 1, mr: 1 }} />
 
                         <Typography color="black" fontSize={'12px'} > {props.checkIn} - {props.checkOut} </Typography>
-                        <Divider orientation="vertical" variant="middle" flexItem sx={{ borderRightWidth: 1, borderColor: '#606060', ml:1, mr:1 }}/>
+                        <Divider orientation="vertical" variant="middle" flexItem sx={{ borderRightWidth: 1, borderColor: '#606060', ml: 1, mr: 1 }} />
 
                         <Typography color="black" fontSize={'12px'} > {who()} </Typography>
-                        
+
 
                     </Button >
                 </Box >

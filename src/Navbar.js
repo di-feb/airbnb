@@ -79,15 +79,17 @@ export default function Navbar() {
 
                         <Button
                             href="/host"
-                            variant="outlined"
+                            variant="text"
                             size="small"
                             sx={{
                                 mr: 5,
                                 mt: 0.5,
                                 maxHeight: '30px',
                                 color: 'black',
-                                borderColor: 'black',
                                 fontSize: '10px',
+                                borderRadius: '30px',
+                                textTransform: 'none',
+                                lineHeight: 1.5,
 
                                 '&:hover': {
                                     backgroundColor: '#dedede',
@@ -118,7 +120,6 @@ export default function Navbar() {
                 <Box
 
                     sx={{
-
                         display: 'flex',
                         flexDirection: 'column',
                         position: 'absolute',
