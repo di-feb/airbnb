@@ -92,7 +92,7 @@ export default function SearchBar(props) {
                         endIcon={ // icon goes to the right side of the button
                             <SearchIcon
                                 sx={{
-                                    backgroundColor: 'red',
+                                    backgroundImage: 'linear-gradient(to right, #d70000, #ff2615, #ff5a3c)',
                                     borderRadius: '50%',
                                     padding: '4px',
                                     color: 'white',

@@ -15,9 +15,11 @@ export default function Accomondation() {
                 bedrooms="8"
                 beds="11"
                 baths="5"
+                area="500"
+                livingRooms="2"
                 distance="48"
                 date="April 20 - 25"
-                price={136}
+                price={500}
             />
         </>
     )
