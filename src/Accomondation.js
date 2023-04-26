@@ -1,3 +1,4 @@
+import React from 'react';
 import CardDetails from './CardDetails';
 
 export default function Accomondation() {
@@ -20,6 +21,12 @@ export default function Accomondation() {
                 distance="48"
                 date="April 20 - 25"
                 price={500}
+                airbnbFee={500}
+                description='This spacious suite with Hot Tub 
+                is located at the highest point of the village with stunning
+                and unlimited views to the famous caldera and the volcano.
+                The king size bed and and the views from the balcony will give unique
+                moments of relaxation and enjoyment!'
             />
         </>
     )

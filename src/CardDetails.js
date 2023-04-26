@@ -1,4 +1,6 @@
 import React from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Navbar from './Navbar';
@@ -16,15 +18,12 @@ import ChairOutlinedIcon from '@mui/icons-material/ChairOutlined';
 import FenceOutlinedIcon from '@mui/icons-material/FenceOutlined';
 import Grid from '@mui/material/Grid';
 import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import { TextField } from '@mui/material';
-import { FormControl } from '@mui/material';
-import { Input } from '@mui/material';
-import {Container} from '@mui/material';
+dayjs.extend(duration);
 
 export default function CardDetails(props) {
 
@@ -73,6 +72,27 @@ export default function CardDetails(props) {
 
     }
 
+    function diffInDays(date1, date2) {
+        const duration = dayjs.duration(date2.diff(date1));
+        return duration.asDays();
+    }
+
+    const [boxTop, setBoxTop] = React.useState(550); // initial value of mt
+
+    const handleScroll = () => {
+        const scrollTop = window.pageYOffset;
+        console.log(scrollTop);
+        if (scrollTop >= 640)
+            setBoxTop(640 - scrollTop);
+    };
+
+    React.useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
     function srcset(image, size, rows = 1, cols = 1) {
         return {
             src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
@@ -80,6 +100,10 @@ export default function CardDetails(props) {
                 }&fit=crop&auto=format&dpr=2 2x`,
         };
     }
+
+    const duration = Math.trunc(diffInDays(date.checkIn, date.checkOut))
+    const cost = props.price * duration
+    const totalCost = cost + props.airbnbFee
 
     return (
         <>
@@ -198,24 +222,36 @@ export default function CardDetails(props) {
                     </Grid>
                 </Grid>
 
+                <Divider sx={{ borderColor: '#606060', mt: 2, width: '550px' }} />
+
+                <Typography variant='title' sx={{ width: '500px', fontSize: '18px', mt: 2 }}> Description of the space. </Typography>
+                <Typography variant='paragraph' sx={{ width: '500px', fontSize: '13px', mt: 2 }}> {props.description} </Typography>
 
                 <Divider sx={{ borderColor: '#606060', mt: 2, width: '550px' }} />
 
+                <Typography variant='title' sx={{ width: '500px', fontSize: '18px', mt: 2 }}> Where you'll be. </Typography>
+                <Typography variant='paragraph' sx={{ width: '500px', fontSize: '13px', mt: 2 }}> {props.city}, {props.country} </Typography>
+
+                <MapContainer center={[51.000, -0.09]} zoom={13} style={{ height: '400px', width: '500px', marginTop: '10px' }}>
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                </MapContainer>
+
                 <Box
+                    id='box'
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         width: '300px',
                         height: '350px',
                         position: 'absolute',
+                        mt: `${boxTop}px`,
+                        left: '880px',
                         bgcolor: 'white',
                         borderWidth: '1px',
                         borderRadius: '15px',
                         borderColor: 'black',
                         borderStyle: 'solid',
                         boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
-                        mt: 69,
-                        ml: 80
                     }}
                 >
                     <Box sx={{ display: 'flex', mt: '15px', ml: '10px', mr: '10px' }}>
@@ -270,7 +306,7 @@ export default function CardDetails(props) {
 
                     >
                         {who()}
-                       
+
                     </Button>
 
 
@@ -290,6 +326,7 @@ export default function CardDetails(props) {
                                 borderWidth: '1px',
                                 borderStyle: 'solid',
                                 backgroundColor: 'white',
+                                zIndex: '9999',
 
                             }}
                         >
@@ -349,31 +386,44 @@ export default function CardDetails(props) {
 
                             '&:hover': {
                                 color: 'black',
-                                backgroundColor: 'white',
-                                borderColor: 'black',
                             },
                         }}
                     >
                         Reserve
                     </Button>
 
-                    <Typography sx={{fontSize:'12px', ml:'80px'}}> You won't be charged yet </Typography>
-                    <Box sx={{ display: "flex", flexDirection: 'row' }}>
-                        <Typography sx={{fontSize:'13px', ml:'20px', mt:'20px'}}> ${props.price} x 7 nights </Typography>   
-                        <Typography sx={{fontSize:'13px', ml:'120px', mt:'20px'}}> $ 3500 </Typography> 
-                    </Box>
-                    <Container sx={{ display: "flex", flexDirection: 'row' }}>
-                        <Typography sx={{fontSize:'13px'}}> Airbnb service free </Typography>    
-                        <Typography sx={{fontSize:'13px', ml:'93px'}}> $ 613 </Typography>
-                    </Container>
+                    <Typography sx={{ fontSize: '12px', ml: '80px' }}> You won't be charged yet </Typography>
+                    <Grid container sx={{ width: '400px', mt: '15px', ml: '20px' }}  >
+                        <Grid item xs={12} sm={6}>
+                            <Typography sx={{ fontSize: '13px' }}> ${props.price} x {duration} nights </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Typography sx={{ fontSize: '13px' }}> $ {cost} </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Typography sx={{ fontSize: '13px' }}> Airbnb service fee </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Typography sx={{ fontSize: '13px' }}> $ {props.airbnbFee} </Typography>
+                        </Grid>
+                    </Grid>
 
-                    <Divider variant="middle" sx={{mt:2}}/>
+                    <Divider variant="middle" sx={{ mt: 2 }} />
+                    <Grid container sx={{ width: '400px', mt: '20px', ml: '20px' }}>
 
-                    <Box sx={{ display: "flex", flexDirection: 'row', margin: '20px' }}>
-                        <Typography sx={{fontSize:'13px', fontWeight:'bold'}}> Total </Typography>
-                        <Typography sx={{fontSize:'13px', ml:'180px', fontWeight:'bold'}}> $ 4113 </Typography>
-                    </Box>
+                        <Grid item xs={12} sm={6}>
+                            <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> Total </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> $ {totalCost} </Typography>
+                        </Grid>
+                    </Grid>
+
+
+
                 </Box>
+
+
             </Box >
         </>
     )
