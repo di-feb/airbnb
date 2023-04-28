@@ -1,6 +1,7 @@
 import React from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Navbar from './Navbar';
@@ -23,6 +24,10 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TextField } from '@mui/material';
+import ProgressBar from './ProgressBar';
+import { Avatar } from '@mui/material';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 dayjs.extend(duration);
 
 export default function CardDetails(props) {
@@ -83,7 +88,9 @@ export default function CardDetails(props) {
         const scrollTop = window.pageYOffset;
         console.log(scrollTop);
         if (scrollTop >= 640)
-            setBoxTop(640 - scrollTop);
+            setBoxTop(scrollTop - 50);
+        else
+            setBoxTop(550);
     };
 
     React.useEffect(() => {
@@ -105,6 +112,20 @@ export default function CardDetails(props) {
     const cost = props.price * duration
     const totalCost = cost + props.airbnbFee
 
+
+    const defaultLocation = L.latLng(37.9838, 23.7275);
+    const pin = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png';
+
+    const pinMB = L.icon({
+        iconUrl: pin,
+        iconSize: [24, 41],
+        iconAnchor: [0, 44],
+        popupAnchor: [12, -40],
+        shadowUrl: null,
+        shadowSize: null,
+        shadowAnchor: null
+    });
+
     return (
         <>
             <Navbar />
@@ -112,7 +133,7 @@ export default function CardDetails(props) {
                 <Typography fontSize='21px' >
                     {props.title}
                 </Typography>
-                <Typography fontSize='12px' sx={{ display: "flex", flexDirection: 'row' }} >
+                <Typography fontSize='12px' >
                     <StarIcon sx={{ color: 'red', height: '14px', mt: '1px' }} />
                     {props.rating}  ·  {props.reviews} reviews  ·  {props.city}, {props.country}
                 </Typography>
@@ -157,7 +178,7 @@ export default function CardDetails(props) {
                 <Typography fontSize='18px' sx={{ mt: 3 }} >
                     {props.typeOfPlace} hosted by {props.hosterName}
                 </Typography>
-                <Typography fontSize='12px' sx={{ display: "flex", flexDirection: 'row' }} >
+                <Typography fontSize='12px' >
                     {props.guests} guests  ·  {props.bedrooms} bedrooms  ·  {props.beds} beds  ·  {props.baths} baths
                 </Typography>
 
@@ -170,7 +191,6 @@ export default function CardDetails(props) {
                 <Typography fontSize='15px' sx={{ mt: 1 }} >
                     Space
                 </Typography>
-
                 <Grid container sx={{ width: '500px' }}  >
                     <Grid item xs={12} sm={4}>
                         <Typography fontSize='12px' sx={{ display: "flex", flexDirection: 'row', mt: 2 }} >
@@ -222,19 +242,182 @@ export default function CardDetails(props) {
                     </Grid>
                 </Grid>
 
+
                 <Divider sx={{ borderColor: '#606060', mt: 2, width: '550px' }} />
 
-                <Typography variant='title' sx={{ width: '500px', fontSize: '18px', mt: 2 }}> Description of the space. </Typography>
+                <Typography variant='title' sx={{ fontSize: '18px', mt: 2 }}> Description of the space. </Typography>
                 <Typography variant='paragraph' sx={{ width: '500px', fontSize: '13px', mt: 2 }}> {props.description} </Typography>
 
                 <Divider sx={{ borderColor: '#606060', mt: 2, width: '550px' }} />
 
-                <Typography variant='title' sx={{ width: '500px', fontSize: '18px', mt: 2 }}> Where you'll be. </Typography>
-                <Typography variant='paragraph' sx={{ width: '500px', fontSize: '13px', mt: 2 }}> {props.city}, {props.country} </Typography>
+                <Typography fontSize='18px' sx={{ display: "flex", flexDirection: 'row', mt: 1 }} >
+                    <StarIcon sx={{ color: 'black', height: '16px', mt: '4px' }} />
+                    {props.rating}  ·  {props.reviews} reviews
+                </Typography>
 
-                <MapContainer center={[51.000, -0.09]} zoom={13} style={{ height: '400px', width: '500px', marginTop: '10px' }}>
+                <Grid container sx={{ width: '500px' }}  >
+                    <Grid item xs={12} sm={3}>
+                        <Typography fontSize='12px' sx={{ mt: 2 }} > Cleanliness </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3} >
+                        <ProgressBar value={props.cleanlinessRating} />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                        <Typography fontSize='12px' sx={{ mt: 2, ml: 1 }} > Accuracy </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3} >
+                        <ProgressBar value={props.accuracyRating} />
+                    </Grid>
+
+                    <Grid item xs={12} sm={3}>
+                        <Typography fontSize='12px' sx={{ mt: 2 }} > Communication </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3} >
+                        <ProgressBar value={props.communicationRating} />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                        <Typography fontSize='12px' sx={{ mt: 2, ml: 1 }} > Check-in </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3} >
+                        <ProgressBar value={props.checkInRating} />
+                    </Grid>
+
+                    <Grid item xs={12} sm={3}>
+                        <Typography fontSize='12px' sx={{ mt: 2 }} > Location</Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3} >
+                        <ProgressBar value={props.locationRating} />
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                        <Typography fontSize='12px' sx={{ mt: 2, ml: 1 }} >Value </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={3} >
+                        <ProgressBar value={props.valueRating} />
+                    </Grid>
+                </Grid>
+
+                <Divider sx={{ borderColor: '#606060', mt: 2, width: '550px' }} />
+
+                <Typography variant='title' sx={{ fontSize: '18px', mt: 2 }}> Where you'll be. </Typography>
+
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: 1 }}>
+                    <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> Location:  </Typography>
+                    <Typography sx={{ fontSize: '13px', ml: 1 }}> {props.city}, {props.country} </Typography>
+                </Box>
+
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: 1 }}>
+                    <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> Address:  </Typography>
+                    <Typography sx={{ fontSize: '13px', ml: 1 }}> {props.address} {props.district} </Typography>
+                </Box>
+
+                <MapContainer center={defaultLocation} zoom={13} style={{ height: '400px', width: '500px', marginTop: '10px' }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker position={defaultLocation} icon={pinMB}>
+                        <Popup>
+                            This is it!
+                        </Popup>
+                    </Marker>
                 </MapContainer>
+
+                <Divider sx={{ borderColor: '#606060', mt: 2, width: '550px' }} />
+
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: 2, alignItems: 'center' }}>
+
+                    <Avatar alt="Remy Sharp" src={require("./images/avatar.png")} />
+                    <Typography variant='title' sx={{ fontSize: '18px', ml: 1 }}> Hosted By {props.hosterName}. </Typography>
+                    <VerifiedUserIcon sx={{ height: '14px', ml: 1 }} />
+                    <Typography sx={{ fontSize: '12px' }}> Identity verified </Typography>
+                </Box>
+                <Typography variant='paragraph' sx={{ width: '500px', fontSize: '13px', mt: 2 }}> {props.hosterDesc} </Typography>
+
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: 2, alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> Policy number:  </Typography>
+                    <Typography sx={{ fontSize: '13px' }}> 00001060752 </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: 2, alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> Languages: </Typography>
+                    <Typography sx={{ fontSize: '13px' }}> English, Ελληνικά </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: 2, alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> Response rate: </Typography>
+                    <Typography sx={{ fontSize: '13px' }}> 97% </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'row', mt: 2, alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> Response time:  </Typography>
+                    <Typography sx={{ fontSize: '13px' }}> Within an hour </Typography>
+                </Box>
+
+                <Button
+                    variant='outlined'
+                    sx={{
+                        width: '120px',
+                        textTransform: 'none',
+                        bgcolor: 'white',
+                        borderColor: 'black',
+                        color: 'black',
+                        borderRadius: '7px',
+                        position: 'absolute',
+                        mt: 213,
+                        ml: 40,
+
+                        '&:hover': {
+                            color: 'black',
+                            backgroundColor: '#dedede',
+                            borderColor: 'black',
+                        },
+
+                    }}
+                >
+                    Contact Host
+                </Button>
+                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute', mt: 223, ml: 38 }}>
+                    <GppMaybeIcon sx={{ color: 'red' }} />
+                    <Typography fontSize='10px' sx={{ width: '220px', ml: 1 }}>
+                        To protect your payment, never transfer money or communicate outside of the Airbnb website or app.
+                    </Typography>
+                </Box>
+
+                <Divider sx={{ borderColor: '#606060', mt: 2, width: '1000px' }} />
+
+                <Typography variant='title' sx={{ fontSize: '18px', mt: 4 }}> Things to know </Typography>
+                <Grid container sx={{ width: '1000px' }}  >
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' fontWeight='bold' sx={{ mt: 2 }} > House Rules </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4} >
+                        <Typography fontSize='13px' fontWeight='bold' sx={{ mt: 2 }} > Safety & property </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' fontWeight='bold' sx={{ mt: 2 }} > Cancellation policy </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4} >
+                        <Typography fontSize='13px' sx={{ mt: 2 }} > Check-in: 3:00 PM - 8:00 PM </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' sx={{ mt: 2 }} > Carbon monoxide alarm not reported </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4} >
+                        <Typography fontSize='13px' sx={{ mt: 2 }} > Free cancellation before Jul 3 </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' sx={{ mt: 2 }} > Checkout before 11:00 AM </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4} >
+                        <Typography fontSize='13px' sx={{ mt: 2 }} > Smoke alarm not reported </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' sx={{ mt: 2 }} >
+                            Review the Host’s full cancellation policy which applies
+                            even if you cancel for illness or disruptions caused by COVID-19.
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4} >
+                        <Typography fontSize='13px' sx={{ mt: -2.5 }} > 4 guests maximum </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' sx={{ mt: -2.5 }} > Not suitable for infants (under 2 years) </Typography>
+                    </Grid>
+                </Grid>
 
                 <Box
                     id='box'
@@ -252,6 +435,7 @@ export default function CardDetails(props) {
                         borderColor: 'black',
                         borderStyle: 'solid',
                         boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
+
                     }}
                 >
                     <Box sx={{ display: 'flex', mt: '15px', ml: '10px', mr: '10px' }}>

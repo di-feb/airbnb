@@ -101,7 +101,7 @@ export default function Navbar() {
                         {/* Sign up and Login buttons */}
                         <Box sx={{ flexGrow: 0, display: { xs: 'end', md: 'flex' } }}>
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button href="/signup" variant="contained" color="primary" size="small" sx={{ maxHeight: '36px' }}>
+                                <Button href="/signup" variant="contained" color="primary" size="small" >
                                     Sign up
                                 </Button>
                                 <Button href="/login" variant="contained" color="secondary" size="small" sx={{ ml: 1 }}>
