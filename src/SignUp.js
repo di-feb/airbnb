@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from './Navbar'
-import Footer from './Footer'
+import Copyright from './Copyright';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Role from './Role';
 
@@ -181,9 +181,18 @@ export default function SignUp() {
                             </Grid>
                         </Box>
                     </Box>
-                    <Footer />
                 </Container >
             </ThemeProvider>
+            <Box
+                component="footer"
+                sx={{
+                    mt:1,
+                    py: 2.0,
+                    backgroundColor: "#c2c2c2",
+                }}
+            >
+                <Copyright /> 
+            </Box > 
         </div>
     );
 }

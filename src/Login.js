@@ -97,9 +97,9 @@ export default function SignIn() {
                             </Grid>
                         </Box>
                     </Box>
-                    <Footer />
                 </Container>
             </ThemeProvider>
+            <Footer />
         </div>
     );
 }

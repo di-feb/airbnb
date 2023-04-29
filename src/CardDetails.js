@@ -28,6 +28,8 @@ import ProgressBar from './ProgressBar';
 import { Avatar } from '@mui/material';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
+import Footer from "./Footer"
+import Copyright from './Copyright';
 dayjs.extend(duration);
 
 export default function CardDetails(props) {
@@ -82,16 +84,24 @@ export default function CardDetails(props) {
         return duration.asDays();
     }
 
-    const [boxTop, setBoxTop] = React.useState(550); // initial value of mt
+    const [boxTop, setBoxTop] = React.useState({
+        top: 640,
+        position: 'absolute',
+    }); // initial value of mt
 
     const handleScroll = () => {
         const scrollTop = window.pageYOffset;
-        console.log(scrollTop);
-        if (scrollTop >= 640)
-            setBoxTop(scrollTop - 50);
-        else
-            setBoxTop(550);
+
+        if (scrollTop >= 550)
+            setBoxTop({ top: 80, position: 'fixed' });
+        if (scrollTop < 550)
+            setBoxTop({ top: 640, position: 'absolute' });
     };
+
+    React.useEffect(() => {
+        console.log(window.pageYOffset);
+        console.log(boxTop.position);
+    }, [boxTop]);
 
     React.useEffect(() => {
         window.addEventListener('scroll', handleScroll);
@@ -227,7 +237,7 @@ export default function CardDetails(props) {
                         <Typography fontSize='12px' sx={{ display: "flex", flexDirection: 'row', mt: 2 }} >
 
                             <FenceOutlinedIcon sx={{ height: '24px', mt: '-5px' }} />
-                            Space Area:{props.area}
+                            Space Area:{props.area} s.m.
 
                         </Typography>
                     </Grid>
@@ -295,6 +305,72 @@ export default function CardDetails(props) {
                         <ProgressBar value={props.valueRating} />
                     </Grid>
                 </Grid>
+
+                <Grid container spacing={4} sx={{ width: '500px' }} >
+                    <Grid item xs={12} sm={6}>
+                        
+                        <Box sx={{ display: 'flex', flexDirection: 'row', mt: 6 }}>
+                            <Avatar alt="Remy Sharp" src={require("./images/avatar.png")} />
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+
+                                <Typography variant='title' fontWeight='bold' fontSize='13px' sx={{ ml: 1.5, mt: 1 }}> Valia </Typography>
+                                <Typography variant='title' sx={{ fontSize: '11px', ml: 1.5, color: '#c2c2c2' }}> April 2023 </Typography>
+                            </Box>
+                        </Box>
+                        <Typography variant='paragraph' sx={{ fontSize: '12px'}}>
+                            Awesome stay! Authentic treehouse experience.
+                            Would 100 percent return. Wayan was a great host!!
+                            When in Bali must check this location out.
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6} >
+                        <Box sx={{ display: 'flex', flexDirection: 'row', mt: 6 }}>
+                            <Avatar alt="Remy Sharp" src={require("./images/avatar.png")} />
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+
+                                <Typography variant='title' fontWeight='bold' fontSize='13px' sx={{ ml: 1.5, mt: 1 }}> Valia </Typography>
+                                <Typography variant='title' sx={{ fontSize: '11px', ml: 1.5, color: '#c2c2c2' }}> April 2023 </Typography>
+                            </Box>
+                        </Box>
+                        <Typography variant='paragraph' sx={{ fontSize: '12px', mt: 2 }}>
+                            Awesome stay! Authentic treehouse experience.
+                            Would 100 percent return. Wayan was a great host!!
+                            When in Bali must check this location out.
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6} >
+                        <Box sx={{ display: 'flex', flexDirection: 'row', mt: 6 }}>
+                            <Avatar alt="Remy Sharp" src={require("./images/avatar.png")} />
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+
+                                <Typography variant='title' fontWeight='bold' fontSize='13px' sx={{ ml: 1.5, mt: 1 }}> Valia </Typography>
+                                <Typography variant='title' sx={{ fontSize: '11px', ml: 1.5, color: '#c2c2c2' }}> April 2023 </Typography>
+                            </Box>
+                        </Box>
+                        <Typography variant='paragraph' sx={{ fontSize: '12px', mt: 2 }}>
+                            Awesome stay! Authentic treehouse experience.
+                            Would 100 percent return. Wayan was a great host!!
+                            When in Bali must check this location out.
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6} >
+                        <Box sx={{ display: 'flex', flexDirection: 'row', mt: 6 }}>
+                            <Avatar alt="Remy Sharp" src={require("./images/avatar.png")} />
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+
+                                <Typography variant='title' fontWeight='bold' fontSize='13px' sx={{ ml: 1.5, mt: 1 }}> Valia </Typography>
+                                <Typography variant='title' sx={{ fontSize: '11px', ml: 1.5, color: '#c2c2c2' }}> April 2023 </Typography>
+                            </Box>
+                        </Box>
+                        <Typography variant='paragraph' sx={{ fontSize: '12px', mt: 2 }}>
+                            Awesome stay! Authentic treehouse experience.
+                            Would 100 percent return. Wayan was a great host!!
+                            When in Bali must check this location out.
+                        </Typography>
+                    </Grid>
+                </Grid>
+
+                {/* /////////////////////////////////////// */}
 
                 <Divider sx={{ borderColor: '#606060', mt: 2, width: '550px' }} />
 
@@ -412,10 +488,20 @@ export default function CardDetails(props) {
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={4} >
-                        <Typography fontSize='13px' sx={{ mt: -2.5 }} > 4 guests maximum </Typography>
+                        <Typography fontSize='13px' sx={{ mt: -2.6 }} > 4 guests maximum </Typography>
                     </Grid>
                     <Grid item xs={12} sm={4}>
-                        <Typography fontSize='13px' sx={{ mt: -2.5 }} > Not suitable for infants (under 2 years) </Typography>
+                        <Typography fontSize='13px' sx={{ mt: -2.6 }} > Not suitable for infants (under 2 years) </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}></Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' fontWeight='bold' sx={{ mt: 2, textDecoration: 'underline' }} > See more </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' fontWeight='bold' sx={{ mt: 2, textDecoration: 'underline' }} > See more </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography fontSize='13px' fontWeight='bold' sx={{ mt: 2, textDecoration: 'underline' }} > See more </Typography>
                     </Grid>
                 </Grid>
 
@@ -426,8 +512,8 @@ export default function CardDetails(props) {
                         flexDirection: 'column',
                         width: '300px',
                         height: '350px',
-                        position: 'absolute',
-                        mt: `${boxTop}px`,
+                        position: boxTop.position,
+                        top: `${boxTop.top}px`,
                         left: '880px',
                         bgcolor: 'white',
                         borderWidth: '1px',
@@ -435,8 +521,8 @@ export default function CardDetails(props) {
                         borderColor: 'black',
                         borderStyle: 'solid',
                         boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
-
                     }}
+                    onScroll={handleScroll}
                 >
                     <Box sx={{ display: 'flex', mt: '15px', ml: '10px', mr: '10px' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
@@ -606,8 +692,17 @@ export default function CardDetails(props) {
 
 
                 </Box>
+            </Box >
 
-
+            <Box
+                component="footer"
+                sx={{
+                    mt: 1,
+                    py: 2.0,
+                    backgroundColor: "#c2c2c2",
+                }}
+            >
+                <Copyright />
             </Box >
         </>
     )

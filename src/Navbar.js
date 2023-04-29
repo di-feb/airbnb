@@ -130,6 +130,7 @@ export default function Navbar() {
                         borderRadius: '30px',
                         backgroundColor: 'white',
                         boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
+                        zIndex: '2',
 
                     }}>
                     <Country
@@ -183,7 +184,9 @@ export default function Navbar() {
                     height: '350px',
                     borderRadius: '30px',
                     backgroundColor: 'white',
-                    boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)'
+                    boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
+                    zIndex: '2',
+
                 }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DateCalendar value={data.checkIn} onChange={(newValue) => setData({ ...data, checkIn: newValue })} minDate={today} />
@@ -205,6 +208,8 @@ export default function Navbar() {
                     borderRadius: '30px',
                     backgroundColor: 'white',
                     boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
+                    zIndex: '2',
+
                 }}>
 
                     <TextField
