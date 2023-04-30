@@ -28,7 +28,6 @@ import ProgressBar from './ProgressBar';
 import { Avatar } from '@mui/material';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
-import Footer from "./Footer"
 import Copyright from './Copyright';
 dayjs.extend(duration);
 
@@ -424,6 +423,7 @@ export default function CardDetails(props) {
                 </Box>
 
                 <Button
+                    href="/contactHost"
                     variant='outlined'
                     sx={{
                         width: '120px',
@@ -433,7 +433,7 @@ export default function CardDetails(props) {
                         color: 'black',
                         borderRadius: '7px',
                         position: 'absolute',
-                        mt: 213,
+                        mt: 258,
                         ml: 40,
 
                         '&:hover': {
@@ -446,7 +446,7 @@ export default function CardDetails(props) {
                 >
                     Contact Host
                 </Button>
-                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute', mt: 223, ml: 38 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute', mt: 268, ml: 38 }}>
                     <GppMaybeIcon sx={{ color: 'red' }} />
                     <Typography fontSize='10px' sx={{ width: '220px', ml: 1 }}>
                         To protect your payment, never transfer money or communicate outside of the Airbnb website or app.
