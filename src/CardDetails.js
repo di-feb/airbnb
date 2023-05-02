@@ -527,7 +527,7 @@ export default function CardDetails(props) {
                     <Box sx={{ display: 'flex', mt: '15px', ml: '10px', mr: '10px' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                             <Typography fontSize='21px' > $ {props.price} </Typography>
-                            <Typography fontSize='14px' color='#3c3c3c' sx={{ mt: '6px', ml: '5px' }} > nigth </Typography>
+                            <Typography fontSize='14px' color='#3c3c3c' sx={{ mt: '6px', ml: '5px' }} > night </Typography>
                             <Typography fontSize='12px' sx={{ display: "flex", flexDirection: 'row', mt: '9px', ml: '65px' }} >
                                 <StarIcon sx={{ color: 'red', height: '14px', mt: '1px' }} />
                                 {props.rating}  ·  {props.reviews} reviews
