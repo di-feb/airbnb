@@ -1,9 +1,10 @@
 import React from "react";
+import HostNavbar from "./HostNavbar"
 
 export default function Host(){
     return (
         <>
-            Hosting page!
+            <HostNavbar />
         </>
     )
 }

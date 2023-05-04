@@ -3,34 +3,17 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Navbar from './Navbar';
 import { Typography } from '@mui/material';
-import StarIcon from '@mui/icons-material/Star';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
 import Divider from '@mui/material/Divider';
-import CollectionsIcon from '@mui/icons-material/Collections';
-import BedroomChildOutlinedIcon from '@mui/icons-material/BedroomChildOutlined';
-import BathroomOutlinedIcon from '@mui/icons-material/BathroomOutlined';
-import AirlineSeatIndividualSuiteOutlinedIcon from '@mui/icons-material/AirlineSeatIndividualSuiteOutlined';
-import CottageOutlinedIcon from '@mui/icons-material/CottageOutlined';
-import ChairOutlinedIcon from '@mui/icons-material/ChairOutlined';
-import FenceOutlinedIcon from '@mui/icons-material/FenceOutlined';
-import Grid from '@mui/material/Grid';
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TextField } from '@mui/material';
-import ProgressBar from './ProgressBar';
 import { Avatar } from '@mui/material';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
-import GppMaybeIcon from '@mui/icons-material/GppMaybe';
-import Copyright from './Copyright';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from 'react-router-dom';
+import ReserveCard from './ReserveCard';
 dayjs.extend(duration);
 
-export default function ContactHost(props) {
+export default function ContactHost() {
 
     const [question, setQuestion] = React.useState('');
     const history = useNavigate();
@@ -136,195 +119,17 @@ export default function ContactHost(props) {
                 >
                     Send Message
                 </Button>
-
-                <Box
-                    id='box'
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: '300px',
-                        height: '350px',
-                        position: 'absolute',
-                        top: '640px',
-                        left: '880px',
-                        bgcolor: 'white',
-                        borderWidth: '1px',
-                        borderRadius: '15px',
-                        borderColor: 'black',
-                        borderStyle: 'solid',
-                        boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
-                    }}
-                    onScroll={handleScroll}
-                >
-                    <Box sx={{ display: 'flex', mt: '15px', ml: '10px', mr: '10px' }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                            <Typography fontSize='21px' > $ {props.price} </Typography>
-                            <Typography fontSize='14px' color='#3c3c3c' sx={{ mt: '6px', ml: '5px' }} > night </Typography>
-                            <Typography fontSize='12px' sx={{ display: "flex", flexDirection: 'row', mt: '9px', ml: '65px' }} >
-                                <StarIcon sx={{ color: 'red', height: '14px', mt: '1px' }} />
-                                {props.rating}  ·  {props.reviews} reviews
-                            </Typography>
-                        </Box>
-
-                    </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', ml: '10px', mr: '10px', mt: '10px' }}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <MobileDatePicker
-                                label="Check In"
-                                value={date.checkIn}
-                                onChange={(newValue) => setDate({ ...date, checkIn: newValue })}
-                                minDate={today}
-                                formatDensity="dense"
-                                slotProps={{ textField: { size: 'small', } }}
-                            />
-                            <MobileDatePicker
-                                label="Check Out"
-                                value={date.checkOut}
-                                onChange={(newValue) => setDate({ ...date, checkOut: newValue })}
-                                minDate={today}
-                                formatDensity="dense"
-                                slotProps={{ textField: { size: 'small' } }}
-                            />
-                        </LocalizationProvider>
-                    </Box>
-
-                    <Button
-                        variant='outlined'
-                        onClick={() => setGuestButton((prev) => (!prev))}
-                        size='small'
-                        sx={{
-                            margin: "10px",
-                            color: "black",
-                            borderColor: '#dedede',
-                            textTransform: 'none !important',
-                            justifyContent: 'flex-start',
-                            '&:hover': {
-                                color: 'black',
-                                backgroundColor: 'white',
-                                borderColor: 'black',
-                            },
-                        }}
-
-
-                    >
-                        {who()}
-
-                    </Button>
-
-
-                    {guestButton &&
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                position: 'absolute',
-                                mt: '150px',
-                                ml: '10px',
-                                mr: '10px',
-                                width: '280px',
-                                height: '250px',
-                                borderRadius: '15px',
-                                borderColor: 'black',
-                                borderWidth: '1px',
-                                borderStyle: 'solid',
-                                backgroundColor: 'white',
-                                zIndex: '9999',
-
-                            }}
-                        >
-                            <TextField
-                                id="adults"
-                                type='number'
-                                label="Number of Adults"
-                                variant="outlined"
-                                value={guests.adults}
-                                name="adults"
-                                onChange={handleChange}
-                                inputProps={{ min: 0 }}
-                                size="small"
-
-                                sx={{ margin: "20px 10px" }}
-                            />
-                            <Divider />
-                            <TextField
-                                id="children"
-                                type='number'
-                                label="Number of Children"
-                                variant="outlined"
-                                value={guests.children}
-                                name="children"
-                                onChange={handleChange}
-                                inputProps={{ min: 0 }}
-                                size="small"
-
-                                sx={{ margin: "20px 10px" }}
-                            />
-                            <Divider />
-                            <TextField
-                                id="pets"
-                                type='number'
-                                label="Number of Pets"
-                                variant="outlined"
-                                value={guests.pets}
-                                name="pets"
-                                onChange={handleChange}
-                                inputProps={{ min: 0 }}
-                                size="small"
-
-                                sx={{ margin: "20px 10px" }}
-                            />
-
-                        </Box>
-                    }
-
-                    <Button
-                        variant='contained'
-                        sx={{
-                            margin: "10px",
-                            backgroundImage: 'linear-gradient(to right, #d70000, #ff2615, #ff5a3c)',
-                            borderColor: 'black',
-                            textTransform: 'none !important',
-                            height: '40px',
-
-                            '&:hover': {
-                                color: 'black',
-                            },
-                        }}
-                    >
-                        Reserve
-                    </Button>
-
-                    <Typography sx={{ fontSize: '12px', ml: '80px' }}> You won't be charged yet </Typography>
-                    <Grid container sx={{ width: '400px', mt: '15px', ml: '20px' }}  >
-                        <Grid item xs={12} sm={6}>
-                            <Typography sx={{ fontSize: '13px' }}> ${props.price} x {duration} nights </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Typography sx={{ fontSize: '13px' }}> $ {cost} </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Typography sx={{ fontSize: '13px' }}> Airbnb service fee </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Typography sx={{ fontSize: '13px' }}> $ {props.airbnbFee} </Typography>
-                        </Grid>
-                    </Grid>
-
-                    <Divider variant="middle" sx={{ mt: 2 }} />
-                    <Grid container sx={{ width: '400px', mt: '20px', ml: '20px' }}>
-
-                        <Grid item xs={12} sm={6}>
-                            <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> Total </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}> $ {totalCost} </Typography>
-                        </Grid>
-                    </Grid>
-
-
-
-                </Box>
-            </Box>
+                
+                <ReserveCard
+                    price='500'
+                    airbnbFee='500'
+                    rating="5.0"
+                    reviews='10'
+                    position='absolute'
+                    top='150px'
+                />
+            </Box>        
+            
         </>
     )
 }
