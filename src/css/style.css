@@ -1,5 +1,5 @@
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Airbnb Cereal', sans-serif;
 }
 
 .bold {
@@ -16,6 +16,20 @@ body {
 }
 
 .card--image {
-    width: 100%;
+    width: 225px;
+    height: 203px;
     border-radius: 9px;
 }
+
+@font-face {
+    font-family: 'Airbnb Cereal';
+    src: url('../fonts/AirbnbCereal_W_Md.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* .MuiButton-label,
+.MuiTypography-root {
+    font-family: 'Airbnb Cereal', sans-serif !important;
+} */
+

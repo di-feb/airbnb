@@ -3,7 +3,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
 import Logo from './Logo';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { Typography } from '@mui/material';
@@ -14,7 +13,8 @@ import { MenuItem } from '@mui/material';
 import { ListItemText } from '@mui/material';
 import Divider from '@mui/material/Divider';
 
-export default function ReserveCard(props) {
+
+export default function HostNavbar(props) {
 
     const [notifications, setNotifications] = React.useState(false)
     const [profile, setProfile] = React.useState(false)
@@ -64,7 +64,7 @@ export default function ReserveCard(props) {
                         <Avatar
                             alt="MyProfile"
                             src={require("./images/avatar.png")}
-                            onClick={() => setNotifications(false)}
+                            onClick={() => {setNotifications(false); setProfile(prev => !prev)}}
                             sx={{
                                 width: '35px', 
                                 height: '35px',
@@ -96,6 +96,7 @@ export default function ReserveCard(props) {
                         position: 'absolute',
                         top: 80,
                         left: 1200,
+                        zIndex:1000,
                     }}
                 >
                     <NotificationsNoneIcon
@@ -126,6 +127,10 @@ export default function ReserveCard(props) {
                         position: 'absolute',
                         top: 80,
                         left: 1250,
+                        borderStyle:'solid',
+                        borderWidth:'1px',
+                        borderColor: 'black',
+                        zIndex:1000,
                     }}
                 >
                     <MenuList dense>

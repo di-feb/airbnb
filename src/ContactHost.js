@@ -81,6 +81,7 @@ export default function ContactHost() {
 
                 <TextField
                     multiline
+                    minRows={4}
                     value={question}
                     onChange={(event) => {
                         setQuestion(event.target.value);

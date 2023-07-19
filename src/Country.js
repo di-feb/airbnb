@@ -1,7 +1,6 @@
 import React from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
+import { Autocomplete, TextField} from '@mui/material';
 import listOfCountries from './countries'
-import { TextField } from '@mui/material';
 import { Box } from '@mui/material';
 
 export default function Country(props) {
@@ -44,7 +43,6 @@ export default function Country(props) {
             )}
             renderInput={(params) => (
                 <TextField
-
                     {...params}
                     label="Choose a country"
                     inputProps={{

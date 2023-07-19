@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import React from 'react';
 
-export default function Logo() {
+export default function Logo(props) {
 
     const [count, setCount] = React.useState(0);
 
@@ -11,14 +11,11 @@ export default function Logo() {
     }, [count]);
 
     return (
-        <Box sx={{ flexGrow: 1, display: { md: 'flex' } }}>
-            <img src={require('./images/logo.png')}
-                alt="logo"
-                style={{ display: 'flex', maxWidth: '100px', maxHeight: '100px', marginTop: "-7px", cursor: 'pointer' }}
-                onClick={() => setCount(prevCount => prevCount + 1)}
-            />
-        </Box>
-
+        <img src={require('./images/logo.png')}
+            alt="logo"
+            style={{ display: 'flex', maxWidth: '100px', maxHeight: '100px', marginTop: "-7px", cursor: 'pointer' }}
+            onClick={() => setCount(prevCount => prevCount + 1)}
+        />
     );
 
 }

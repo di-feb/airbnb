@@ -323,7 +323,7 @@ export default function CardDetails(props) {
                     <Typography sx={{ fontSize: '13px', ml: 1 }}> {props.address} {props.district} </Typography>
                 </Box>
 
-                <MapContainer center={defaultLocation} zoom={13} style={{ height: '400px', width: '500px', marginTop: '10px' }}>
+                <MapContainer center={defaultLocation} zoom={13} style={{ height: '400px', width: '500px', marginTop: '10px', borderRadius:'15px' }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     <Marker position={defaultLocation} icon={pinMB}>
                         <Popup>
@@ -371,7 +371,7 @@ export default function CardDetails(props) {
                         color: 'black',
                         borderRadius: '7px',
                         position: 'absolute',
-                        mt: 258,
+                        mt: 261,
                         ml: 40,
 
                         '&:hover': {

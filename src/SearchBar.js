@@ -4,6 +4,7 @@ import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Divider } from '@mui/material';
+import "./css/style.css"
 
 export default function SearchBar(props) {
 
@@ -67,7 +68,7 @@ export default function SearchBar(props) {
     return (
         <>
             {openMenu === 0 &&
-                <Box sx={{ flexGrow: 1, display: { xs: 'center', md: 'flex' } }}>
+                <Box sx={{ flexGrow: 1, display: { md: 'flex' }}}>
                     <Button
                         variant="outlined"
                         sx={{
@@ -118,8 +119,8 @@ export default function SearchBar(props) {
                     display: { xs: 'center', md: 'flex' },
                     borderRadius: '40px',
                     backgroundColor: isClicked.flag ? '#c2c2c2' : 'white',
-                    borderWidth: '3px',
-                    borderColor: '#606060',
+                    borderWidth: '1px',
+                    borderColor: '#979797',
                     borderStyle: 'solid',
 
                     transition: 'all 0.1s ease',
@@ -128,7 +129,6 @@ export default function SearchBar(props) {
                     '&:hover': {
                         backgroundColor: isClicked.flag ? '#c2c2c2' : 'white',
                         borderColor: 'black',
-                        borderWidth: '3px',
                     },
 
                 }}
@@ -143,9 +143,9 @@ export default function SearchBar(props) {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: isClicked.id === 1 && 'white',
-                            boxShadow: isClicked.id === 1 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
-                            '&:hover': { backgroundColor: isClicked.id === 1 ? 'white' : 'grey' },
+                            backgroundColor: isClicked.id === 1 && props.showCountry === 1 && 'white',
+                            boxShadow: isClicked.id === 1  && props.showCountry === 1 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
+                            '&:hover': { backgroundColor: isClicked.id === 1 && props.showCountry === 1 ? 'white' : 'grey' },
                             textTransform: 'none !important',
                         }}
                         onClick={() => { props.setShowCountry(1); setIsClicked({ id: 1, flag: true }); }}
@@ -183,9 +183,9 @@ export default function SearchBar(props) {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: isClicked.id === 2 && 'white',
-                            boxShadow: isClicked.id === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
-                            '&:hover': { backgroundColor: isClicked.id === 2 ? 'white' : 'grey' },
+                            backgroundColor: isClicked.id === 2  && props.showCountry === 2 && 'white',
+                            boxShadow: isClicked.id === 2   && props.showCountry === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
+                            '&:hover': { backgroundColor: isClicked.id === 2 && props.showCountry === 2 ? 'white' : 'grey' },
                             textTransform: 'none !important',
                         }}
                         onClick={() => { props.setShowCountry(2); setIsClicked({ id: 2, flag: true }); setOpenCheckIn(true); }}
@@ -219,9 +219,9 @@ export default function SearchBar(props) {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: isClicked.id === 3 && 'white',
-                            boxShadow: isClicked.id === 3 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
-                            '&:hover': { backgroundColor: isClicked.id === 3 ? 'white' : 'grey' },
+                            backgroundColor: isClicked.id === 3  && props.showCountry === 3 && 'white',
+                            boxShadow: isClicked.id === 3  && props.showCountry === 3 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
+                            '&:hover': { backgroundColor: isClicked.id === 3 && props.showCountry === 3 ? 'white' : 'grey' },
                             textTransform: 'none !important',
                         }}
                         onClick={() => { props.setShowCountry(3); setIsClicked({ id: 3, flag: true }); setOpenCheckOut(true); }}
@@ -255,9 +255,9 @@ export default function SearchBar(props) {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: isClicked.id === 4 && 'white',
-                            boxShadow: isClicked.id === 4 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
-                            '&:hover': { backgroundColor: isClicked.id === 4 ? 'white' : 'grey' },
+                            backgroundColor: isClicked.id === 4  && props.showCountry === 4 && 'white',
+                            boxShadow: isClicked.id === 4  && props.showCountry === 4 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
+                            '&:hover': { backgroundColor: isClicked.id === 4 && props.showCountry === 4 ? 'white' : 'grey' },
                             textTransform: 'none !important',
                         }}
                         onClick={() => { props.setShowCountry(4); setIsClicked({ id: 4, flag: true }); }}
