@@ -31,6 +31,10 @@ import Logo from './Logo';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
+import { useNavigate } from 'react-router-dom';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import DeleteIcon from '@mui/icons-material/Delete';
 dayjs.extend(duration);
 
 
@@ -104,6 +108,8 @@ export default function Host() {
 
     const [checked, setChecked] = React.useState(false);
 
+    const navigate = useNavigate();
+
     const [alert, setAlert] = React.useState(false);
     const handleAlert = (event, reason) => {
         if (reason === 'clickaway') {
@@ -117,17 +123,47 @@ export default function Host() {
     const Alert = React.forwardRef(function Alert(props, ref) {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
+    const [transition, setTransition] = React.useState(undefined);
 
     function TransitionLeft(props) {
         return <Slide {...props} direction="left" />;
     }
 
-    const [transition, setTransition] = React.useState(undefined);
+
 
     const handleTransition = (Transition) => () => {
         setTransition(() => Transition);
         setAlert(true);
+
+        setTimeout(() => {
+            navigate('/hostHome');
+        }, 5000); // 5000 milliseconds = 5 seconds
     };
+
+
+
+    const fileInputRef = React.useRef(null);
+
+    const [fileList, setFileList] = React.useState([]);
+
+    function srcset(image, size, path) {
+        const imageSrc = require(`/mnt/c/Users/Stath/OneDrive/Εικόνες/Programming pics/${image}`)
+
+        return {
+            src: `${imageSrc}?w=${size}&h=${size}&fit=crop&auto=format`,
+            srcSet: `${imageSrc}?w=${size}&h=${size}&fit=crop&auto=format&dpr=2 2x`,
+        };
+    }
+
+    const handleFileUpload = (event) => {
+        const files = event.target.files;
+        if (files.length === 0) return;
+
+        setFileList((prevFileList) => [...prevFileList, ...Array.from(files)]);
+        event.target.value = null;
+    };
+
+    const [openList, setOpenList] = React.useState(false);
 
     return (
         <>
@@ -499,10 +535,80 @@ export default function Host() {
                         <Typography variant="paragraph" align="center" fontSize={14} sx={{ color: 'black', mt: 4, mb: 2.5 }}>
                             Last but not least, add some pictures of your space.
                         </Typography>
-                        <Button variant='contained' color='inherit' endIcon={<PhotoCamera />} sx={{ textTransform: 'none' }}>
-                            Add some pictures
-                        </Button>
+                        {
+
+                            fileList.length > 0 &&
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <ImageList
+                                    sx={{ width: 1000, height: 222, borderRadius: '15px' }}
+                                    variant="quilted"
+                                    cols={4}
+                                    rowHeight={220}
+                                >
+                                    {fileList.map((item) => (
+                                        <ImageListItem key={item.name}>
+                                            <img
+                                                {...srcset(item.name, 401, item.webkitRelativePath)}
+                                                loading="lazy"
+                                            />
+                                        </ImageListItem>
+                                    ))}
+                                </ImageList>
+                            </Box>
+
+
+                        }
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            id="upload-photo"
+                            onChange={handleFileUpload}
+                            style={{ display: 'none' }}
+                            multiple
+                        />
+                        {
+                            fileList.length === 0 &&
+                            <Button
+                                variant='contained'
+                                color='inherit'
+                                endIcon={<PhotoCamera />}
+                                sx={{ textTransform: 'none' }}
+                                onClick={() => fileInputRef.current.click()}
+                            >
+                                Add some pictures
+                            </Button>
+                        }
+                        {
+                            fileList.length > 0 &&
+                            <Grid container spacing={2} sx={{ width: '500px' }}>
+                                <Grid item xs={6}>
+                                    <Button
+                                        variant='contained'
+                                        color='inherit'
+                                        endIcon={<PhotoCamera />}
+                                        sx={{ textTransform: 'none' }}
+                                        onClick={() => fileInputRef.current.click()}
+                                    >
+                                        Add some pictures
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Button
+                                        variant='contained'
+                                        color='error'
+                                        endIcon={<DeleteIcon />}
+                                        sx={{ textTransform: 'none' }}
+                                        onClick={(prev) => setOpenList(!prev)}
+                                    >
+                                        Delete pictures
+                                    </Button>
+
+                                </Grid>
+                            </Grid>
+                        }
+
                         <Button
+                            type="file"
                             variant='contained'
                             onClick={handleTransition(TransitionLeft)}
                             sx={{
@@ -511,7 +617,7 @@ export default function Host() {
                                 mt: 4
                             }}
                         >
-                            Gongrats your place is ready!
+                            Sumbit!
                         </Button>
                         {alert &&
                             <Snackbar
@@ -524,7 +630,8 @@ export default function Host() {
                                     The customazation of your rental space have been completed successfully!
                                     You'll be redirected to your home page in 5...
                                 </Alert>
-                            </Snackbar>}
+                            </Snackbar>
+                        }
                     </Box>
                 </Container >
             </Box >
