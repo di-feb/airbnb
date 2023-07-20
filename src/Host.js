@@ -620,36 +620,35 @@ export default function Host() {
                         }
                         {
                             openList &&
-                            <Box>
-                                <Dialog open={openList} onClose={() => setOpenList(false)}>
-                                    <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >Picture List</DialogTitle>
-                                    <Divider variant="middle" sx={{ borderColor: '#979797', mt: 0.3}} />
-                                    <DialogContent>
-                                        <List>
-                                            {fileList.map((picture, index) => (
-                                                <ListItem key={index}>
-                                                    {/* Display the picture */}
-                                                    <ListItemAvatar>
-                                                        <Avatar src={URL.createObjectURL(picture)} alt={`Picture ${index + 1}`} />
-                                                    </ListItemAvatar>
 
-                                                    {/* Display the name of the picture */}
-                                                    <ListItemText primary={picture.name} />
+                            <Dialog open={openList} onClose={() => setOpenList(false)}>
+                                <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >Picture List</DialogTitle>
+                                <Divider variant="middle" sx={{ borderColor: '#979797', mt: 0.3 }} />
+                                <DialogContent>
+                                    <List>
+                                        {fileList.map((picture, index) => (
+                                            <ListItem key={index}>
+                                                {/* Display the picture */}
+                                                <ListItemAvatar>
+                                                    <Avatar src={URL.createObjectURL(picture)} alt={`Picture ${index + 1}`} />
+                                                </ListItemAvatar>
 
-                                                    {/* Delete button */}
-                                                    <IconButton onClick={() => handleDeletePicture(index)}>
-                                                        <DeleteIcon sx={{
-                                                            '&:hover': {
-                                                                color: 'black',
-                                                            },
-                                                        }} />
-                                                    </IconButton>
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    </DialogContent>
-                                </Dialog>
-                            </Box>
+                                                {/* Display the name of the picture */}
+                                                <ListItemText primary={picture.name} />
+
+                                                {/* Delete button */}
+                                                <IconButton onClick={() => handleDeletePicture(index)}>
+                                                    <DeleteIcon sx={{
+                                                        '&:hover': {
+                                                            color: 'black',
+                                                        },
+                                                    }} />
+                                                </IconButton>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </DialogContent>
+                            </Dialog>
                         }
 
                         <Button

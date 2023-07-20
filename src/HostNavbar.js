@@ -12,6 +12,7 @@ import { MenuList } from '@mui/material';
 import { MenuItem } from '@mui/material';
 import { ListItemText } from '@mui/material';
 import Divider from '@mui/material/Divider';
+import { ClickAwayListener } from '@mui/material';
 
 
 export default function HostNavbar(props) {
@@ -37,13 +38,13 @@ export default function HostNavbar(props) {
                                 width: '30px',
                                 height: '30px',
 
-                                borderWidth: '1px',
+                                borderWidth: notifications ? '2.5px' : '1px',
                                 borderStyle: 'solid',
-                                borderColor: 'black',
+                                borderColor: '#606060',
                                 borderRadius: '50px',
                                 bgcolor: 'white',
 
-                                mr: 4,
+                                ml: 155,
 
                                 '&:hover': {
                                     backgroundColor: '#dedede',
@@ -51,12 +52,11 @@ export default function HostNavbar(props) {
                             }}
                         >
                             <NotificationsNoneIcon
-                                onClick={() => { setNotifications(prev => !prev); setProfile(false); } }
+                                onClick={() => { setNotifications(prev => !prev); }}
                                 sx={{
                                     color: 'black',
                                     height: '32px',
                                     cursor: 'pointer',
-
                                 }}
                             />
                         </Box>
@@ -64,9 +64,14 @@ export default function HostNavbar(props) {
                         <Avatar
                             alt="MyProfile"
                             src={require("./images/avatar.png")}
-                            onClick={() => {setNotifications(false); setProfile(prev => !prev)}}
+                            onClick={() => {setProfile(prev => !prev) }}
                             sx={{
-                                width: '35px', 
+                                borderWidth: profile ? '2.5px' : '0px',
+                                borderStyle: 'solid',
+                                borderColor: '#606060',
+                                borderRadius: '50px',
+                                bgcolor: 'white',
+                                width: '35px',
                                 height: '35px',
                                 cursor: 'pointer',
                             }}
@@ -78,90 +83,95 @@ export default function HostNavbar(props) {
 
             {
                 notifications &&
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: '270px',
-                        height: '500px',
-
-                        borderWidth: '1px',
-                        borderColor: 'black',
-                        borderStyle: 'solid',
-                        borderRadius: '10px',
-                        bgcolor: 'white',
-
-                        position: 'absolute',
-                        top: 80,
-                        left: 1200,
-                        zIndex:1000,
-                    }}
-                >
-                    <NotificationsNoneIcon
-                        size
+                <ClickAwayListener onClickAway={() => setNotifications(false)}>
+                    <Box
                         sx={{
-                            color: 'black',
-                            minHeight: '38px',
-                            minWidth: '38px',
-                            cursor: 'pointer',
-                            mb: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '270px',
+                            height: '500px',
+
+                            borderWidth: '1px',
+                            borderColor: 'black',
+                            borderStyle: 'solid',
+                            borderRadius: '10px',
+                            bgcolor: 'white',
+
+                            position: 'absolute',
+                            top: 80,
+                            left: 1200,
+                            zIndex: 1000,
                         }}
-                    />
-                    <Typography>
-                        No notifications yet!
-                    </Typography>
-                    <Typography variant="paragraph" align="center" fontSize={12} sx={{ color: 'grey', mt: 2 }}>
-                        You've got a blank slate (for now). We'll let you know when updates arrive!
-                    </Typography>
-                </Box >
+                    >
+                        <NotificationsNoneIcon
+                            size
+                            sx={{
+                                color: 'black',
+                                minHeight: '38px',
+                                minWidth: '38px',
+                                cursor: 'pointer',
+                                mb: 2,
+                            }}
+                        />
+                        <Typography>
+                            No notifications yet!
+                        </Typography>
+                        <Typography variant="paragraph" align="center" fontSize={12} sx={{ color: 'grey', mt: 2 }}>
+                            You've got a blank slate (for now). We'll let you know when updates arrive!
+                        </Typography>
+                    </Box >
+                </ClickAwayListener>
             }
 
             {
                 profile &&
+                <ClickAwayListener onClickAway={() => setProfile(false)}>
 
-                <Paper
-                    sx={{
-                        width: '270px',
-                        position: 'absolute',
-                        top: 80,
-                        left: 1250,
-                        borderStyle:'solid',
-                        borderWidth:'1px',
-                        borderColor: 'black',
-                        zIndex:1000,
-                    }}
-                >
-                    <MenuList dense>
-                        <MenuItem>
-                            <ListItemText >Profile</ListItemText>
-                        </MenuItem>
-                        <MenuItem>
-                            <ListItemText >Account</ListItemText>
-                        </MenuItem>
-                        <MenuItem>
-                            <ListItemText >Get Help</ListItemText>
-                        </MenuItem>
+                    <Paper
+                        sx={{
+                            width: '270px',
+                            position: 'absolute',
+                            top: 80,
+                            left: 1250,
+                            borderStyle: 'solid',
+                            borderWidth: '1px',
+                            borderColor: 'black',
+                            zIndex: 1000,
 
-                        <Divider />
+                        }}
+                    >
+                        <MenuList dense>
+                            <MenuItem>
+                                <ListItemText >Profile</ListItemText>
+                            </MenuItem>
+                            <MenuItem>
+                                <ListItemText >Account</ListItemText>
+                            </MenuItem>
+                            <MenuItem>
+                                <ListItemText >Get Help</ListItemText>
+                            </MenuItem>
 
-                        <MenuItem>
-                            <ListItemText>Language and tranlsation</ListItemText>
-                        </MenuItem>
-                        <MenuItem>
-                            <ListItemText>EUR</ListItemText>
-                        </MenuItem>
+                            <Divider />
 
-                        <Divider />
-                        <MenuItem>
-                            <ListItemText>Switch to travaling</ListItemText>
-                        </MenuItem>
-                        <MenuItem>
-                            <ListItemText>Log Out</ListItemText>
-                        </MenuItem>
-                    </MenuList>
-                </Paper>
+                            <MenuItem>
+                                <ListItemText>Language and tranlsation</ListItemText>
+                            </MenuItem>
+                            <MenuItem>
+                                <ListItemText>EUR</ListItemText>
+                            </MenuItem>
+
+                            <Divider />
+                            <MenuItem>
+                                <ListItemText>Switch to travaling</ListItemText>
+                            </MenuItem>
+                            <MenuItem>
+                                <ListItemText>Log Out</ListItemText>
+                            </MenuItem>
+                        </MenuList>
+                    </Paper>
+                </ClickAwayListener>
 
             }
         </>

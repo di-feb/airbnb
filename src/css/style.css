@@ -21,6 +21,10 @@ body {
     border-radius: 9px;
 }
 
+.hostHomeButtons {
+    
+}
+
 @font-face {
     font-family: 'Airbnb Cereal';
     src: url('../fonts/AirbnbCereal_W_Md.otf') format('truetype');

@@ -184,7 +184,7 @@ export default function SearchBar(props) {
                             justifyContent: 'center',
                             alignItems: 'center',
                             backgroundColor: isClicked.id === 2  && props.showCountry === 2 && 'white',
-                            boxShadow: isClicked.id === 2   && props.showCountry === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
+                            boxShadow: isClicked.id ===  2   && props.showCountry === 2 && '0px 8px 12px rgba(0, 0, 0, 0.4)',
                             '&:hover': { backgroundColor: isClicked.id === 2 && props.showCountry === 2 ? 'white' : 'grey' },
                             textTransform: 'none !important',
                         }}
