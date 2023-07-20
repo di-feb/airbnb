@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, Divider, TextField, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import "./css/style.css";
 import SearchIcon from '@mui/icons-material/Search';
@@ -35,6 +35,7 @@ import { useNavigate } from 'react-router-dom';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Dialog, DialogTitle, DialogContent, List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
 dayjs.extend(duration);
 
 
@@ -164,6 +165,15 @@ export default function Host() {
     };
 
     const [openList, setOpenList] = React.useState(false);
+
+    const handleDeletePicture = (index) => {
+        // Remove the picture from the pictures list using its index
+        setFileList((prevPictures) => {
+            const updatedPictures = [...prevPictures];
+            updatedPictures.splice(index, 1);
+            return updatedPictures;
+        });
+    };
 
     return (
         <>
@@ -540,14 +550,15 @@ export default function Host() {
                             fileList.length > 0 &&
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <ImageList
-                                    sx={{ width: 1000, height: 222, borderRadius: '15px' }}
+                                    sx={{ width: 500, height: 111, borderRadius: '15px' }}
                                     variant="quilted"
                                     cols={4}
-                                    rowHeight={220}
+                                    rowHeight={111}
                                 >
                                     {fileList.map((item) => (
                                         <ImageListItem key={item.name}>
                                             <img
+                                                alt="home images"
                                                 {...srcset(item.name, 401, item.webkitRelativePath)}
                                                 loading="lazy"
                                             />
@@ -580,7 +591,7 @@ export default function Host() {
                         }
                         {
                             fileList.length > 0 &&
-                            <Grid container spacing={2} sx={{ width: '500px' }}>
+                            <Grid container spacing={2} sx={{ width: '400px' }}>
                                 <Grid item xs={6}>
                                     <Button
                                         variant='contained'
@@ -598,13 +609,47 @@ export default function Host() {
                                         color='error'
                                         endIcon={<DeleteIcon />}
                                         sx={{ textTransform: 'none' }}
-                                        onClick={(prev) => setOpenList(!prev)}
+                                        onClick={() => setOpenList(true)}
                                     >
                                         Delete pictures
                                     </Button>
 
                                 </Grid>
                             </Grid>
+
+                        }
+                        {
+                            openList &&
+                            <Box>
+                                <Dialog open={openList} onClose={() => setOpenList(false)}>
+                                    <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >Picture List</DialogTitle>
+                                    <Divider variant="middle" sx={{ borderColor: '#979797', mt: 0.3}} />
+                                    <DialogContent>
+                                        <List>
+                                            {fileList.map((picture, index) => (
+                                                <ListItem key={index}>
+                                                    {/* Display the picture */}
+                                                    <ListItemAvatar>
+                                                        <Avatar src={URL.createObjectURL(picture)} alt={`Picture ${index + 1}`} />
+                                                    </ListItemAvatar>
+
+                                                    {/* Display the name of the picture */}
+                                                    <ListItemText primary={picture.name} />
+
+                                                    {/* Delete button */}
+                                                    <IconButton onClick={() => handleDeletePicture(index)}>
+                                                        <DeleteIcon sx={{
+                                                            '&:hover': {
+                                                                color: 'black',
+                                                            },
+                                                        }} />
+                                                    </IconButton>
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    </DialogContent>
+                                </Dialog>
+                            </Box>
                         }
 
                         <Button
