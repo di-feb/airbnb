@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useRef } from 'react';
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,15 +10,13 @@ import SearchBar from './SearchBar';
 import Country from './Country';
 import { Divider, TextField } from '@mui/material';
 import dayjs from 'dayjs';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { ClickAwayListener } from '@mui/material';
 import "./css/style.css"
+import DatePicker from './DatePicker';
 
 
 export default function Navbar() {
-    const [showCountry, setShowCountry] = React.useState(0);
+    const [showPopUp, setShowPopUp] = React.useState(0);
 
     const now = new Date(Date.now());
     const today = dayjs(new Date().toString());
@@ -55,21 +53,6 @@ export default function Navbar() {
         }
     };
 
-    const popupRef = useRef(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (popupRef.current && !popupRef.current.contains(event.target)) {
-                setShowCountry(0);
-            }
-        };
-
-        document.addEventListener('click', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
-    }, []);
 
 
     return (
@@ -86,8 +69,8 @@ export default function Navbar() {
                         {/* Search Bar */}
                         <Box sx={{ flexGrow: 1.2, display: 'flex', justifyContent: 'center' }}>
                             <SearchBar
-                                setShowCountry={setShowCountry}
-                                showCountry={showCountry}
+                                setShowPopUp={setShowPopUp}
+                                showPopUp={showPopUp}
                                 country={data.country.label}
                                 city={data.city}
                                 district={data.district}
@@ -96,8 +79,8 @@ export default function Navbar() {
                                 pets={data.numOfPets}
                                 checkIn={data.checkIn.format('ddd MMM DD').substring(0, 11)}
                                 checkOut={data.checkOut.format('ddd MMM DD').substring(0, 11)}
-                                checkInClicked={showCountry}
-                                checkOutClicked={showCountry}
+                                checkInClicked={showPopUp}
+                                checkOutClicked={showPopUp}
                             />
                         </Box>
 
@@ -143,8 +126,8 @@ export default function Navbar() {
 
 
             {
-                showCountry === 1 &&
-                <ClickAwayListener onClickAway={() => setShowCountry(0)}>
+                showPopUp === 1 &&
+                <ClickAwayListener onClickAway={() => setShowPopUp(0)}>
                     <Box
 
                         sx={{
@@ -203,32 +186,21 @@ export default function Navbar() {
                 </ClickAwayListener>
             }
             {
-                ((showCountry === 2) || (showCountry === 3)) &&
-                <ClickAwayListener onClickAway={() => setShowCountry(0)}>
-                    <Box sx={{
-                        display: 'flex',
-                        position: 'absolute',
-                        mt: '20px',
-                        ml: '350px',
-                        width: '640px',
-                        height: '350px',
-                        borderRadius: '30px',
-                        backgroundColor: 'white',
-                        boxShadow: '0px 10px 19px rgba(0, 0, 0, 0.4)',
-                        zIndex: '2',
-
-                    }}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateCalendar value={data.checkIn} onChange={(newValue) => setData({ ...data, checkIn: newValue })} minDate={today} />
-                            <DateCalendar value={data.checkOut} onChange={(newValue) => setData({ ...data, checkOut: newValue })} minDate={today} />
-                        </LocalizationProvider>
-                    </Box>
+                (showPopUp === 2)  &&
+                <ClickAwayListener onClickAway={() => setShowPopUp(0)}>
+                    <DatePicker data={data} setData={setData} today={today} />
+                </ClickAwayListener>
+            }
+            {
+                (showPopUp === 3)  &&
+                <ClickAwayListener onClickAway={() => setShowPopUp(0)}>
+                    <DatePicker  data={data} setData={setData} today={today} />
                 </ClickAwayListener>
             }
 
             {
-                showCountry === 4 &&
-                <ClickAwayListener onClickAway={() => setShowCountry(0)}>
+                showPopUp === 4 &&
+                <ClickAwayListener onClickAway={() => setShowPopUp(0)}>
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',

@@ -106,7 +106,6 @@ export default function HostNavbar(props) {
                         }}
                     >
                         <NotificationsNoneIcon
-                            size
                             sx={{
                                 color: 'black',
                                 minHeight: '38px',

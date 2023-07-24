@@ -1,6 +1,5 @@
 import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Button, Divider, TextField, Typography } from "@mui/material";
@@ -59,25 +58,33 @@ export default function Host() {
     const [coordinates, setCoordinates] = React.useState(initialCoordinates);
     const [center, setCenter] = React.useState(initialCoordinates);
 
-    const handleSearch = async () => {
-        try {
-            const provider = new OpenStreetMapProvider();
-            console.log(location);
-            console.log(provider);
-            const results = await provider.search({ query: location });
-            if (results.length > 0) {
-                const { x: lng, y: lat } = results[0];
-                console.log("hi");
-                setCoordinates([lat, lng]);
-                setCenter([lat, lng]);
-                console.log(center);
-            } else {
-                console.log('No results found');
-            }
-        } catch (error) {
-            console.log('Error:', error);
-        }
-    };
+
+    // const handleSearch = async () => {
+    //     try {
+            
+    //         const provider = new Geocoder({
+    //             provider: 'openstreetmap',
+    //             apiKey: 'AIzaSyAFxUYSNiDFXuakM1aPwbG-JIm6DLjd5kM', 
+    //             formatter: null
+    //         });
+
+    //         console.log(location);
+    //         console.log(provider);
+    //         const results = await provider.geocode(location);
+    //         if (results.length > 0) {
+    //             const { latitude: lat, longitude: lng } = results[0];
+    //             console.log("hi");
+    //             setCoordinates([lat, lng]);
+    //             setCenter([lat, lng]);
+    //             console.log(center);
+    //         } else {
+    //             console.log('No results found');
+    //         }
+    //     } catch (error) {
+    //         console.log('Error:', error);
+    //     }
+    // };
+
 
     const handleLocationChange = (newLocation) => {
         setLocation(newLocation);
@@ -236,16 +243,16 @@ export default function Host() {
                             sx: { borderRadius: "30px" },
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    <IconButton onClick={handleSearch}>
+                                     <IconButton > {/* onClick({()=> handleSearch}) */}
                                         <SearchIcon />
                                     </IconButton>
                                 </InputAdornment>
                             ),
-                            onKeyDown: (e) => {
-                                if (e.key === "Enter") {
-                                    handleSearch();
-                                }
-                            }
+                            // onKeyDown: (e) => {
+                            //     if (e.key === "Enter") {
+                            //         handleSearch();
+                            //     }
+                            // }
                         }}
                     >
                     </TextField>

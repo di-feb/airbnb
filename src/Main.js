@@ -1,20 +1,34 @@
 import React from 'react'
 import Card from './Card'
-import cards from './cards'
+import Papa from 'papaparse';
 
 export default function Main() {
 
-    const cardElements = cards.map(card => {
-        return <Card
-            img={"place_2.png"}
-            country="Greece"
-            city="Athens"
-            distance="48 kilometers"
-            rating="5.0"
-            date="April 20 - 25"
-            price={136}
-        />
-    })
+    const [data, setData] = React.useState([]);
+
+    React.useEffect(() => {
+        // Function to read and parse the CSV data
+        const fetchData = async () => {
+            const csvFilePath = './csv/listings.csv.csv';
+            const response = await fetch(csvFilePath);
+            const text = await response.text();
+
+            // Use PapaParse to parse the CSV data
+            const parsedData = Papa.parse(text, { header: true });
+
+            // Check for parsing errors
+            if (parsedData.errors.length > 0) {
+                console.error('Error parsing the CSV data:', parsedData.errors);
+                return;
+            }
+
+            // Get the records from the parsed data
+            const records = parsedData.data;
+            setData(records);
+        };
+
+        fetchData();
+    }, []);
 
 
 
@@ -27,49 +41,18 @@ export default function Main() {
             padding: "10px",
             marginTop: "30px"
         }}>
-            <Card
-                img={cards[0].img}
-                country="Greece"
-                city="Athens"
-                distance="48 kilometers"
-                rating="5.0"
-                date="April 20 - 25"
-                price={136}
-            />
-
-            <Card
-                img={cards[1].img}
-                country="Greece"
-                city="Athens"
-                distance="48 kilometers"
-                rating="5.0"
-                date="April 20 - 25"
-                price={136}
-            />
-
-            <Card
-                img={cards[2].img}
-                country="Greece"
-                city="Athens"
-                distance="48 kilometers"
-                rating="5.0"
-                date="April 20 - 25"
-                price={136}
-            />
-
-            <Card
-                img={cards[3].img}
-                country="Greece"
-                city="Athens"
-                distance="48 kilometers"
-                rating="5.0"
-                date="April 20 - 25"
-                price={136}
-            />
-            {cardElements}
-
-
-
+            {data.map((item) => (
+                <Card
+                    key={item.id}
+                    img={item.picture_url}
+                    city={item.city}
+                    country={item.country}
+                    rating={item.rating}
+                    distance={item.distance}
+                    date={item.date}
+                    price={item.price}
+                />
+            ))}
         </div>
     )
 
