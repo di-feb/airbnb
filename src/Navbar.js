@@ -45,7 +45,7 @@ export default function Navbar() {
         })
     }
 
-    const handleCountryChange = (event, newValue) => {
+    const handleCountryChange = (newValue) => {
         if (newValue === null) {
             setData({ ...data, country: { code: '', label: '', phone: '' } });
         } else {
@@ -57,17 +57,17 @@ export default function Navbar() {
 
     return (
         <>
-            <AppBar sx={{ backgroundColor: 'white' }} position="static">
+            <AppBar sx={{ backgroundColor: 'white' }} position="static" >
                 <Container maxWidth="xxl">
-                    <Toolbar disableGutters style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Toolbar sx={{ display: 'flex', justifyContent: 'space-around' }}>
 
                         {/* Logo */}
-                        <Box sx={{ flexGrow: 1.8, display: 'flex', justifyContent: 'flex-start' }}>
+                        <Box sx={{ flexGrow: 1 }}>
                             <Logo />
                         </Box>
 
                         {/* Search Bar */}
-                        <Box sx={{ flexGrow: 1.2, display: 'flex', justifyContent: 'center' }}>
+                        <Box sx={{ flexGrow: 2, display: 'flex', justifyContent: 'center' }}>
                             <SearchBar
                                 setShowPopUp={setShowPopUp}
                                 showPopUp={showPopUp}
@@ -85,7 +85,7 @@ export default function Navbar() {
                         </Box>
 
                         {/* Host Button and Sign up/Login buttons */}
-                        <Box sx={{ flexGrow: 0, display: 'flex', justifyContent: 'flex-end' }}>
+                        <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             {/* Host Button */}
                             <Button
                                 href="/host"
@@ -93,13 +93,13 @@ export default function Navbar() {
                                 size="small"
                                 sx={{
                                     mr: 2,
-                                    mt: 0.5,
                                     maxHeight: '30px',
                                     color: 'black',
                                     fontSize: '10px',
                                     borderRadius: '30px',
                                     textTransform: 'none',
                                     lineHeight: 1.5,
+                                    padding: 1,
                                     '&:hover': {
                                         backgroundColor: '#dedede',
                                         borderColor: 'black',
@@ -110,7 +110,7 @@ export default function Navbar() {
                             </Button>
 
                             {/* Sign up and Login buttons */}
-                            <Button href="/signup" variant="contained" color="primary" size="small">
+                            <Button href="/signup" variant="contained" color="info" size="small">
                                 Sign up
                             </Button>
                             <Button href="/login" variant="contained" color="secondary" size="small" sx={{ ml: 1 }}>
@@ -186,15 +186,19 @@ export default function Navbar() {
                 </ClickAwayListener>
             }
             {
-                (showPopUp === 2)  &&
+                showPopUp === 2 &&
                 <ClickAwayListener onClickAway={() => setShowPopUp(0)}>
-                    <DatePicker data={data} setData={setData} today={today} />
+                    <Box>
+                        <DatePicker data={data} setData={setData} today={today} />
+                    </Box >
                 </ClickAwayListener>
             }
             {
-                (showPopUp === 3)  &&
+                showPopUp === 3 &&
                 <ClickAwayListener onClickAway={() => setShowPopUp(0)}>
-                    <DatePicker  data={data} setData={setData} today={today} />
+                    <Box>
+                        <DatePicker data={data} setData={setData} today={today} />
+                    </Box>
                 </ClickAwayListener>
             }
 

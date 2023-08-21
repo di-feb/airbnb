@@ -10,9 +10,17 @@ body {
     color: #918E9B;
 }
 
+.logo {
+    display: flex;
+    max-width: 80px;
+    max-height: 100px;
+    align-items: center;
+    cursor: pointer;
+}
+
 .card {
-    width: 225px;
-    font-size: 13px;
+    display: 'flex';
+    margin-bottom: 15px;
 }
 
 .card--image {
@@ -21,19 +29,46 @@ body {
     border-radius: 9px;
 }
 
-.hostHomeButtons {
-    
+.card--text {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+
 }
 
-@font-face {
+.card--country {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: #222;
+    margin-top: 6px;
+}
+
+.card--rating {
+    display: flex;
+    align-items: center;
+    color: #222;
+    margin-right: 8px;
+}
+
+.card--price {
+    display: flex;
+    flex-direction: row;
+    margin-top: 8px;
+}
+
+.card--price span {
+    margin-right: 4px;
+}
+
+/* @font-face {
     font-family: 'Airbnb Cereal';
     src: url('../fonts/AirbnbCereal_W_Md.otf') format('truetype');
     font-weight: normal;
     font-style: normal;
-}
+} */
 
 /* .MuiButton-label,
 .MuiTypography-root {
     font-family: 'Airbnb Cereal', sans-serif !important;
 } */
-
