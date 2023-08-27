@@ -6,6 +6,9 @@ const flash = require('express-flash')
 const session = require('express-session')
 const methodOverride = require('method-override')
 const initializePassport = require('./passport-config')
+const db = require('./config/database')
+const crypto = require('crypto');
+const sessionSecret = crypto.randomBytes(64).toString('hex');
 
 initializePassport(
     passport,
@@ -16,7 +19,7 @@ initializePassport(
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false
 }))
@@ -24,44 +27,41 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
 
-app.get('/', checkAuthenticated, (req, res) => {
-    
+app.get('/', (req, res) => {
+    //todo
 });
 
 
-app.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('login.ejs')
-})
 
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+app.post('/login',  passport.authenticate('local', {
     successRedirect: '/',
     failureRedirect: '/login',
     failureFlash: true
 }))
 
-app.get('/register', checkNotAuthenticated, (req, res) => {
-    res.render('register.ejs')
-})
+// app.get('/signup', (req, res) => {
+//     res.render('/signup');
+// })
 
-app.post('/register', checkNotAuthenticated, async (req, res) => {
+app.post('/signup', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         
         // Insert user into MySQL database
         db.query(
-            'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
-            [req.body.name, req.body.email, hashedPassword],
+            'INSERT INTO users (username, firstname, lastname, email, phoneNumber, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.phoneNumber, hashedPassword, req.body.role],
             (error, results) => {
                 if (error) {
                     console.error(error);
-                    res.redirect('/register');
+                    res.redirect('/signup');
                 } else {
                     res.redirect('/login');
                 }
             }
         );
     } catch {
-        res.redirect('/register');
+        res.redirect('/signup');
     }
 });
 

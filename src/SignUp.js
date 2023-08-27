@@ -66,7 +66,7 @@ export default function SignUp() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         try {
-            const response = await axios.post('/register', {
+            const response = await axios.post('/signup', {
                 username: formData.get('username'),
                 firstName: formData.get('firstName'),
                 lastName: formData.get('lastName'),
@@ -101,56 +101,56 @@ export default function SignUp() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
                             <PersonAddIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
                             Sign up
                         </Typography>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                mt: 3,
-                                width: "130px",
-                                height: "130px",
-                                bgcolor: "black",
-                                borderRadius: "100%"
-                            }}
-                        >
-                            <Button
-                                variant="contained"
-                                endIcon={<PhotoCamera />}
-                                sx={{
-                                    minWidth: '25px',
-                                    minHeight: '25px',
-                                    mt: '110px',
-                                    ml: '23px'
-                                }}
 
-                            >
-                                Add
-                            </Button>
-                        </Box >
-                        <Box component="form" noValidate onSubmit={()=> { handleSubmit(); handleTransition(TransitionLeft); } } sx={{ mt: 3 }}>
+                        <Avatar
+                            alt="Remy Sharp"
+                            src={require("./images/avatar.png")}
+                            sx={{
+                                width: '120px',
+                                height: '120px',
+                                mt: 5
+                            }} />
+                        <Button
+                            variant="contained"
+                            endIcon={<PhotoCamera />}
+                            size='small'
+                            color="info"
+                            sx={{
+                                
+                                mt: '-12px',
+                                textTransform: 'none'
+                            }}
+
+                        >
+                            Add Photo
+                        </Button>
+
+                        <Box component="form" noValidate onSubmit={() => { handleSubmit(); handleTransition(TransitionLeft); }} sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
-                                        autoComplete="given-name"
-                                        id="userName"
-                                        name="userName"
                                         required
                                         fullWidth
-                                        label="Username"
                                         autoFocus
+                                        autoComplete="username"
+                                        id="userName"
+                                        name="userName"
+                                        label="Username"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <TextField
-                                        autoComplete="given-name"
-                                        id="firstName"
-                                        name="firstName"
                                         required
                                         fullWidth
+                                        autoComplete="first-name"
+                                        id="firstName"
+                                        name="firstName"
                                         label="First Name"
                                     />
                                 </Grid>
@@ -158,31 +158,32 @@ export default function SignUp() {
                                     <TextField
                                         required
                                         fullWidth
+                                        autoComplete="last-name"
                                         id="lastName"
                                         name="lastName"
                                         label="Last Name"
-                                        autoComplete="family-name"
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
                                         required
                                         fullWidth
+                                        autoComplete="email"
                                         id="email"
                                         name="email"
                                         label="Email Address"
-                                        autoComplete="email"
                                         type='email'
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
-                                        type='number'
                                         required
                                         fullWidth
+                                        autoComplete="phoneNumber"
                                         id="phoneNumber"
                                         name="phoneNumber"
                                         label="Phone Number"
+                                        type='number'
                                         inputProps={{
                                             pattern: "[0-9]*", // only allow numbers
                                             inputMode: "numeric", // show numeric keyboard on mobile devices
@@ -194,6 +195,7 @@ export default function SignUp() {
                                     <TextField
                                         required
                                         fullWidth
+                                        autoComplete="new-password"
                                         id="password"
                                         name="password"
                                         label="Password"
@@ -204,6 +206,7 @@ export default function SignUp() {
                                     <TextField
                                         required
                                         fullWidth
+                                        autoComplete="password-validation"
                                         id="passwordValid"
                                         name="passwordValid"
                                         label="Password Validation"
@@ -217,7 +220,6 @@ export default function SignUp() {
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                required
                                                 id="consent"
                                                 name="consent"
                                                 color="primary"
@@ -227,10 +229,9 @@ export default function SignUp() {
                                 </Grid>
                             </Grid>
                             <Button
-                                type="submit"
                                 fullWidth
+                                type="submit"
                                 variant="contained"
-                                onClick={() => {  }}
                                 sx={{ mt: 3, mb: 2 }}
                             >
                                 Sign Up
@@ -251,8 +252,7 @@ export default function SignUp() {
                                     TransitionComponent={transition}
                                 >
                                     <Alert onClose={handleAlert} severity="success" sx={{ width: '100%', alignItems: "center" }}>
-                                        The customazation of your rental space have been completed successfully!
-                                        You'll be redirected to your home page in 5...
+                                        Your registration was successfull!
                                     </Alert>
                                 </Snackbar>
                             }

@@ -26,7 +26,7 @@ export default function Login() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         try {
-            const response = await axios.post('/register', {
+            const response = await axios.post('/login', {
                 username: formData.get('username'),
                 password: formData.get('password'),
             });
@@ -89,7 +89,7 @@ export default function Login() {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                             >
-                                Sign In
+                                Log In
                             </Button>
                             <Grid container>
                                 <Grid item xs>
