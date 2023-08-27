@@ -16,19 +16,75 @@ import Navbar from './Navbar'
 import Copyright from './Copyright';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Role from './Role';
-
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import Slide from '@mui/material/Slide';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const theme = createTheme();
 
 export default function SignUp() {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+
+    const navigate = useNavigate();
+
+    const [alert, setAlert] = React.useState(false);
+    const handleAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setAlert(false);
     };
+
+
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+    const [transition, setTransition] = React.useState(undefined);
+
+    function TransitionLeft(props) {
+        return <Slide {...props} direction="left" />;
+    }
+
+
+
+    const handleTransition = (Transition) => () => {
+        if (signUp) {
+            setTransition(() => Transition);
+            setAlert(true);
+
+            setTimeout(() => {
+                navigate('/');
+            }, 3000);
+        }
+    };
+
+    const [signUp, setSignUp] = React.useState(false);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        try {
+            const response = await axios.post('/register', {
+                username: formData.get('username'),
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                phoneNumber: formData.get('phoneNumber'),
+                password: formData.get('password'),
+                passwordValid: formData.get('passwordValid'),
+                role: formData.get('role'),
+                consent: formData.get('consent'),
+            });
+            console.log(response.data);
+            setSignUp(true);
+        } catch (error) {
+            console.error(error);
+
+        }
+    };
+
 
     return (
         <div>
@@ -75,15 +131,15 @@ export default function SignUp() {
                                 Add
                             </Button>
                         </Box >
-                        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                        <Box component="form" noValidate onSubmit={()=> { handleSubmit(); handleTransition(TransitionLeft); } } sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
                                         autoComplete="given-name"
+                                        id="userName"
                                         name="userName"
                                         required
                                         fullWidth
-                                        id="userName"
                                         label="Username"
                                         autoFocus
                                     />
@@ -91,12 +147,11 @@ export default function SignUp() {
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         autoComplete="given-name"
+                                        id="firstName"
                                         name="firstName"
                                         required
                                         fullWidth
-                                        id="firstName"
                                         label="First Name"
-                                        autoFocus
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -104,8 +159,8 @@ export default function SignUp() {
                                         required
                                         fullWidth
                                         id="lastName"
-                                        label="Last Name"
                                         name="lastName"
+                                        label="Last Name"
                                         autoComplete="family-name"
                                     />
                                 </Grid>
@@ -114,9 +169,10 @@ export default function SignUp() {
                                         required
                                         fullWidth
                                         id="email"
-                                        label="Email Address"
                                         name="email"
+                                        label="Email Address"
                                         autoComplete="email"
+                                        type='email'
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -124,9 +180,9 @@ export default function SignUp() {
                                         type='number'
                                         required
                                         fullWidth
-                                        id="phone"
+                                        id="phoneNumber"
+                                        name="phoneNumber"
                                         label="Phone Number"
-                                        name="phone"
                                         inputProps={{
                                             pattern: "[0-9]*", // only allow numbers
                                             inputMode: "numeric", // show numeric keyboard on mobile devices
@@ -138,20 +194,20 @@ export default function SignUp() {
                                     <TextField
                                         required
                                         fullWidth
+                                        id="password"
                                         name="password"
                                         label="Password"
                                         type="password"
-                                        id="password"
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
                                         required
                                         fullWidth
-                                        name="validPassword"
+                                        id="passwordValid"
+                                        name="passwordValid"
                                         label="Password Validation"
                                         type="password"
-                                        id="validPassword"
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -159,7 +215,13 @@ export default function SignUp() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <FormControlLabel
-                                        control={<Checkbox value="allowExtraEmails" color="primary" />}
+                                        control={
+                                            <Checkbox
+                                                required
+                                                id="consent"
+                                                name="consent"
+                                                color="primary"
+                                            />}
                                         label="By checking this box, you are agreeing to our terms of service."
                                     />
                                 </Grid>
@@ -168,6 +230,7 @@ export default function SignUp() {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
+                                onClick={() => {  }}
                                 sx={{ mt: 3, mb: 2 }}
                             >
                                 Sign Up
@@ -179,6 +242,20 @@ export default function SignUp() {
                                     </Link>
                                 </Grid>
                             </Grid>
+
+                            {alert &&
+                                <Snackbar
+                                    open={alert}
+                                    autoHideDuration={5000}
+                                    onClose={handleAlert}
+                                    TransitionComponent={transition}
+                                >
+                                    <Alert onClose={handleAlert} severity="success" sx={{ width: '100%', alignItems: "center" }}>
+                                        The customazation of your rental space have been completed successfully!
+                                        You'll be redirected to your home page in 5...
+                                    </Alert>
+                                </Snackbar>
+                            }
                         </Box>
                     </Box>
                 </Container >
@@ -186,13 +263,13 @@ export default function SignUp() {
             <Box
                 component="footer"
                 sx={{
-                    mt:1,
+                    mt: 1,
                     py: 2.0,
                     backgroundColor: "#c2c2c2",
                 }}
             >
-                <Copyright /> 
-            </Box > 
+                <Copyright />
+            </Box >
         </div>
     );
 }

@@ -1,5 +1,4 @@
 
-import AppRoute from "./AppRoute";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SignUp from './SignUp';
 import Login from './Login';

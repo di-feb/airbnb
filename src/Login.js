@@ -12,23 +12,31 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Copyright from './Copyright';
 import Navbar from './Navbar'
 import Footer from './Footer'
+import axios from 'axios';
 
 
 
 const theme = createTheme();
 
-export default function SignIn() {
-    const handleSubmit = (event) => {
+export default function Login() {
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            username: data.get('username'),
-            password: data.get('password'),
-        });
-    };
+        const formData = new FormData(event.currentTarget);
+        try {
+            const response = await axios.post('/register', {
+                username: formData.get('username'),
+                password: formData.get('password'),
+            });
+            console.log(response.data);
+            
+        } catch (error) {
+            console.error(error);
+
+        }
+    }
 
     return (
         <div>
