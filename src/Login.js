@@ -12,6 +12,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import Slide from '@mui/material/Slide';
+import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar'
 import Footer from './Footer'
 import axios from 'axios';
@@ -22,22 +26,91 @@ const theme = createTheme();
 
 export default function Login() {
 
+    const navigate = useNavigate();
+
+    const [alert, setAlert] = React.useState(0);
+    const [transition, setTransition] = React.useState(undefined);
+    const [signUp, setSignUp] = React.useState(false);
+
+    const handleAlert = (reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlert(false);
+    };
+
+
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    function TransitionLeft(props) {
+        return <Slide {...props} direction="left" />;
+    }
+
+
+    
+    
+    // Holds the values of all the fiedls
+    const [data, setData] = React.useState({
+        username: '',
+        password: '',
+        rememberMe: ''
+    });
+    
+    // Updates all fields values.  
+    // Checks if submit is clickable and updates canSubmit.
+    const handleFieldChange = (name, value, checked) => {
+        setData((prev) => ({
+            ...prev,
+            [name]: name !== checked ? value : checked
+        }));
+    };
+    
+    const [error, setError] = React.useState('');
+    
+    
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
+        
         try {
             const response = await axios.post('http://localhost:5000/login', {
-                username: formData.get('username'),
-                password: formData.get('password'),
+                username: data.username,
+                password: data.password,
             });
-            console.log(response.data);
+            
+            if (response.data.message === 'Invalid username or password') {
+                setError('Invalid username or password');
+                
+            } else if (response.data.message === 'Login successful') {
+                setError('');
+                setSignUp(true);
+            }
             
         } catch (error) {
+            setError('pisw');
             console.error(error);
-
+            
         }
     }
 
+
+    // Controls the navigation
+    const handleTransition = (Transition) => {
+        if (signUp) {
+            setTransition(() => Transition);
+            setAlert(1);
+
+            setTimeout(() => {
+                navigate('/login');
+            }, 3000);
+        }
+        else{
+            setTransition(() => Transition);
+            setAlert(2);
+        }
+    };
+    
     return (
         <div>
             <Navbar />
@@ -58,29 +131,45 @@ export default function Login() {
                         <Typography component="h1" variant="h5">
                             Log in
                         </Typography>
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                        <Box component="form" onSubmit={(e) => { handleSubmit(e); handleTransition(TransitionLeft) }} noValidate sx={{ mt: 1 }}>
                             <TextField
                                 margin="normal"
                                 required
                                 fullWidth
                                 id="username"
-                                label="Username"
                                 name="username"
+                                value={data.username}
+                                label="Username"
                                 autoComplete="username"
                                 autoFocus
+                                onChange={(e) => {
+                                    handleFieldChange("username", e.target.value);
+                                }}
                             />
                             <TextField
                                 margin="normal"
                                 required
                                 fullWidth
                                 name="password"
+                                id="password"
+                                value={data.password}
                                 label="Password"
                                 type="password"
-                                id="password"
                                 autoComplete="current-password"
+                                onChange={(e) => {
+                                    handleFieldChange("password", e.target.value);
+                                }}
                             />
                             <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
+                                control={
+                                    <Checkbox
+                                        color="primary"
+                                        value={data.rememberMe} 
+                                        onChange={(e) => {
+                                            handleFieldChange("rememberMe", e.target.checked);
+                                        }}
+                                    />
+                                }
                                 label="Remember me"
                             />
                             <Button
@@ -103,6 +192,30 @@ export default function Login() {
                                     </Link>
                                 </Grid>
                             </Grid>
+                            {alert === 1 &&
+                                <Snackbar
+                                    open={alert === 1}
+                                    autoHideDuration={5000}
+                                    onClose={handleAlert}
+                                    TransitionComponent={transition}
+                                >
+                                    <Alert onClose={handleAlert} severity="success" sx={{ width: '100%', alignItems: "center" }}>
+                                        You re logging in successfullly!
+                                    </Alert>
+                                </Snackbar>
+                            }
+                            {alert === 2 &&
+                                <Snackbar
+                                    open={alert === 2}
+                                    autoHideDuration={5000}
+                                    onClose={handleAlert}
+                                    TransitionComponent={transition}
+                                >
+                                    <Alert onClose={handleAlert} severity="error" sx={{ width: '100%', alignItems: "center" }}>
+                                        {error}
+                                    </Alert>
+                                </Snackbar>
+                            }
                         </Box>
                     </Box>
                 </Container>
