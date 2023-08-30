@@ -26,7 +26,7 @@ export default function Login() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         try {
-            const response = await axios.post('/login', {
+            const response = await axios.post('http://localhost:5000/login', {
                 username: formData.get('username'),
                 password: formData.get('password'),
             });

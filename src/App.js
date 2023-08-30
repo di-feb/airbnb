@@ -11,26 +11,21 @@ import "./css/style.css"
 
 
 export default function App() {
-    const path = window.location.pathname
 
-    const currentPath = ( (path === "/") ? <Home /> : null)
-  
+
     return (
-        <div>
-            <Router>
-                <Routes>
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/host" element={<Host />} />
-                    <Route path="/hostHome" element={<HostHome />} />
-                    <Route path="/accomondation" element={<Accomondation />} />
-                    <Route path="/contactHost" element={<ContactHost />}/>
-                </Routes>
-            </Router>
-            {currentPath}
 
-            
-        </div >
+        <Router>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/host" element={<Host />} />
+                <Route path="/hostHome" element={<HostHome />} />
+                <Route path="/accomondation" element={<Accomondation />} />
+                <Route path="/contactHost" element={<ContactHost />} />
+            </Routes>
+        </Router>
+
     );
 }

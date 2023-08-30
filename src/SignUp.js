@@ -11,16 +11,20 @@ import Box from '@mui/material/Box';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Navbar from './Navbar'
 import Copyright from './Copyright';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import Role from './Role';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import validator from 'validator'
 
 const theme = createTheme();
 
@@ -63,27 +67,161 @@ export default function SignUp() {
     const [signUp, setSignUp] = React.useState(false);
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
         const formData = new FormData(event.currentTarget);
         try {
-            const response = await axios.post('/signup', {
+            await axios.post('http://localhost:5000/signup', {
                 username: formData.get('username'),
-                firstName: formData.get('firstName'),
-                lastName: formData.get('lastName'),
+                firstname: formData.get('firstname'),
+                lastname: formData.get('lastname'),
                 email: formData.get('email'),
                 phoneNumber: formData.get('phoneNumber'),
                 password: formData.get('password'),
-                passwordValid: formData.get('passwordValid'),
                 role: formData.get('role'),
                 consent: formData.get('consent'),
             });
-            console.log(response.data);
             setSignUp(true);
         } catch (error) {
             console.error(error);
 
         }
     };
+
+    const [data, setData] = React.useState({
+        username: "",
+        firstname: "",
+        lastname: "",
+        email: "",
+        phoneNumber: "",
+        password: "",
+        passwordValid: "",
+        role: "",
+        consent: "",
+    });
+
+    const [errors, setErrors] = React.useState({
+        username: false,
+        firstname: false,
+        lastname: false,
+        email: false,
+        phoneNumber: false,
+        password: false,
+        passwordValid: false,
+        role: false,
+        consent: false,
+    });
+
+
+    const [submitClicked, setSubmitClicked] = React.useState(false)
+
+    const handleFieldChange = (name, value, checked) => {
+        setData((prev) => ({
+            ...prev,
+            [name]: name !== checked ? value : checked
+        }));
+    };
+
+    const usernameError = (username) => {
+        if ((username === "" && submitClicked) || username.length > 10)
+            setErrors({ ...errors, username: true })
+        else
+            setErrors({ ...errors, username: false })
+    }
+
+    const handleUsernameHelperText = () => {
+        if (data.username === "" && submitClicked) {
+            return `Username is required.`
+        }
+        else if (data.username.length > 10) {
+            return 'Username must be smaller than 10 characters.'
+        }
+
+    }
+
+    const emailError = (email) => {
+        const atIndex = email.indexOf('@');
+
+        if (!email.length && submitClicked)
+            setErrors({ ...errors, email: true })
+
+        else if (atIndex === -1 && email.length)
+            setErrors({ ...errors, email: true })
+
+        else if ((atIndex === 0 || atIndex === email.length - 1) && email.length)
+            setErrors({ ...errors, email: true })
+        else
+            setErrors({ ...errors, email: false })
+    }
+
+    const handleEmailHelperText = () => {
+        const atIndex = data.email.indexOf('@');
+
+        if (!data.email.length && submitClicked) {
+            return 'Email is required.'
+        }
+
+        else if (atIndex === -1 && data.email.length) {
+            return 'Email must contain "@" character.';
+        }
+
+        else if ((atIndex === 0 || atIndex === data.email.length - 1) && data.email.length) {
+            return 'Invalid email format.';
+        }
+        else
+            return "";
+    };
+
+
+    const [phoneNumberIsClicked, setPhoneNumberIsClicked] = React.useState(false)
+
+    const phoneNumberHelperText = () => {
+        return data.phoneNumber.length !== 10 && 'Phone Number must have 10 digits.'
+    }
+
+    const phoneNumberError = (phoneNumber) => {
+        if (phoneNumber.length !== 10)
+            setErrors({ ...errors, phoneNumber: true })
+        else
+            setErrors({ ...errors, phoneNumber: false })
+    }
+
+    const [passwordHelperText, setPasswordHelperText] = React.useState('');
+    const [passwordFieldColor, setPasswordFieldColor] = React.useState('primary');
+
+
+    const validate = (value) => {
+        if (validator.isStrongPassword(value, {
+            minLength: 8, minLowercase: 1,
+            minUppercase: 0, minNumbers: 1, minSymbols: 1
+        })) {
+            setPasswordHelperText('Strong Password')
+            setErrors({ ...errors, password: false })
+            setPasswordFieldColor('success')
+        }
+        else {
+            setPasswordHelperText('Type at least 8 characters, 1 number and 1 symbol (!, ?, #)')
+            setErrors({ ...errors, password: true })
+            setPasswordFieldColor('error')
+        }
+    }
+
+    const [passwordValidationHelperText, setPasswordValidationHelperText] = React.useState('');
+    const [passwordValidIsClicked, setPasswordValidIsClicked] = React.useState(false);
+    const [passwordValidFieldColor, setPasswordValidFieldColor] = React.useState('primary');
+
+    const passwordValidation = (value, password) => {
+        if (password === value && passwordValidIsClicked) {
+            setPasswordValidationHelperText('The passwords match!')
+            setErrors({ ...errors, passwordValid: false })
+            setPasswordValidFieldColor('success')
+        }
+        else if (password !== value && passwordValidIsClicked) {
+            setPasswordValidationHelperText('The passwords are not the same!')
+            setErrors({ ...errors, passwordValid: true })
+            setPasswordValidFieldColor('error')
+        }
+    }
+
+
 
 
     return (
@@ -122,7 +260,7 @@ export default function SignUp() {
                             size='small'
                             color="info"
                             sx={{
-                                
+
                                 mt: '-12px',
                                 textTransform: 'none'
                             }}
@@ -131,7 +269,7 @@ export default function SignUp() {
                             Add Photo
                         </Button>
 
-                        <Box component="form" noValidate onSubmit={() => { handleSubmit(); handleTransition(TransitionLeft); }} sx={{ mt: 3 }}>
+                        <Box component="form" noValidate onSubmit={() => { handleSubmit(); handleTransition(TransitionLeft); setSubmitClicked(true) }} sx={{ mt: 3 }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
@@ -139,9 +277,12 @@ export default function SignUp() {
                                         fullWidth
                                         autoFocus
                                         autoComplete="username"
-                                        id="userName"
-                                        name="userName"
+                                        id="username"
+                                        name="username"
                                         label="Username"
+                                        error={errors.username}
+                                        onChange={(e) => { handleFieldChange("username", e.target.value); usernameError(e.target.value) }}
+                                        helperText={handleUsernameHelperText()}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -149,9 +290,12 @@ export default function SignUp() {
                                         required
                                         fullWidth
                                         autoComplete="first-name"
-                                        id="firstName"
-                                        name="firstName"
+                                        id="firstname"
+                                        name="firstname"
                                         label="First Name"
+                                        error={(data.firstname === "" && submitClicked)}
+                                        onChange={(e) => handleFieldChange("firstname", e.target.value)}
+                                        helperText={submitClicked && `Firstname is required`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -159,9 +303,12 @@ export default function SignUp() {
                                         required
                                         fullWidth
                                         autoComplete="last-name"
-                                        id="lastName"
-                                        name="lastName"
+                                        id="lastname"
+                                        name="lastname"
                                         label="Last Name"
+                                        error={data.lastname === "" && submitClicked}
+                                        onChange={(e) => handleFieldChange("lastname", e.target.value)}
+                                        helperText={submitClicked && `Lastname is required`}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -173,6 +320,9 @@ export default function SignUp() {
                                         name="email"
                                         label="Email Address"
                                         type='email'
+                                        error={errors.email}
+                                        onChange={(e) => { handleFieldChange("email", e.target.value); emailError(e.target.value) }}
+                                        helperText={handleEmailHelperText()}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -189,6 +339,13 @@ export default function SignUp() {
                                             inputMode: "numeric", // show numeric keyboard on mobile devices
                                             min: 0
                                         }}
+                                        error={errors.phoneNumber && phoneNumberIsClicked}
+                                        onChange={(e) => {
+                                            handleFieldChange("phoneNumber", e.target.value);
+                                            phoneNumberError(e.target.value)
+                                        }}
+                                        onClick={() => setPhoneNumberIsClicked(true)}
+                                        helperText={phoneNumberIsClicked && phoneNumberHelperText()}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -200,6 +357,14 @@ export default function SignUp() {
                                         name="password"
                                         label="Password"
                                         type="password"
+                                        color={passwordFieldColor}
+                                        onChange={(e) => {
+                                            handleFieldChange("password", e.target.value);
+                                            validate(e.target.value);
+                                            passwordValidation(e.target.value, data.passwordValid)
+                                        }}
+                                        helperText={passwordHelperText}
+
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -209,22 +374,45 @@ export default function SignUp() {
                                         autoComplete="password-validation"
                                         id="passwordValid"
                                         name="passwordValid"
-                                        label="Password Validation"
+                                        label="Confirm Password"
                                         type="password"
+                                        color={passwordValidFieldColor}
+                                        onChange={(e) => {
+                                            handleFieldChange("passwordValid", e.target.value);
+                                            passwordValidation(e.target.value, data.password)
+                                        }}
+                                        onClick={() => setPasswordValidIsClicked(true)}
+                                        helperText={passwordValidationHelperText}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Role />
+                                    <FormControl fullWidth color={submitClicked && data.role === "" && 'error'}>
+                                        <InputLabel id="role">Role</InputLabel>
+                                        <Select
+                                            id="role"
+                                            name='role'
+                                            labelId="role"
+                                            label="Role"
+                                            onChange={(e) => { handleFieldChange("role", e.target.value) }}
+                                            helperText={submitClicked && data.role === "" && "Role is required"}
+                                        >
+                                            <MenuItem value={'Host'}>Host</MenuItem>
+                                            <MenuItem value={'Tenant'}>Tenant</MenuItem>
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <FormControlLabel
+                                        sx={{ color: data.consent === '' && submitClicked && '#d32f2f' }}
                                         control={
                                             <Checkbox
                                                 id="consent"
                                                 name="consent"
-                                                color="primary"
+                                                color={data.consent === '' && submitClicked ? '#d32f2f' : 'primary'}
+                                                onChange={(e) => handleFieldChange("consent", e.target.checked)}
+                                                sx={{ color: data.consent === '' && submitClicked && '#d32f2f' }}
                                             />}
-                                        label="By checking this box, you are agreeing to our terms of service."
+                                        label="Accept Terms and Conditions"
                                     />
                                 </Grid>
                             </Grid>
