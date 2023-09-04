@@ -35,7 +35,6 @@ export default function SignUp() {
 
     const [alert, setAlert] = React.useState(false);
     const [transition, setTransition] = React.useState(undefined);
-    const [signUp, setSignUp] = React.useState(false);
 
     const handleAlert = (reason) => {
         if (reason === 'clickaway') {
@@ -53,52 +52,6 @@ export default function SignUp() {
         return <Slide {...props} direction="left" />;
     }
 
-
-
-
-
-    // Post the data into the backend
-    const handleSubmit = async (event) => {
-        event.preventDefault(); // Prevent the default form submission
-
-        // Set submitClicked to true when the submit button is clicked
-        setSubmitClicked(true);
-
-        if (!canSubmit)
-            return;  // If there is an error dont submit
-
-        try {
-            await axios.post('http://localhost:5000/signup', {
-                username: data.username,
-                firstname: data.firstname,
-                lastname: data.lastname,
-                email: data.email,
-                phoneNumber: data.phoneNumber,
-                password: data.password,
-                role: data.role,
-                consent: data.consent,
-            });
-            setSignUp(true);
-        }
-        catch (error) {
-            console.error(error);
-        }
-
-    };
-
-    // Controls the navigation
-    const handleTransition = (Transition) => {
-        if (signUp) {
-            setTransition(() => Transition);
-            setAlert(true);
-
-            setTimeout(() => {
-                navigate('/login');
-            }, 3000);
-        }
-    };
-
-
     // Holds the values of all the fiedls
     const [data, setData] = React.useState({
         username: '',
@@ -109,7 +62,7 @@ export default function SignUp() {
         password: '',
         passwordValid: '',
         role: '',
-        consent: '',
+        consent: false,
     });
 
     // Holds what field is in error state
@@ -133,33 +86,87 @@ export default function SignUp() {
         email: '',
         phoneNumber: '',
         password: '',
-        passwordValid: '',
         role: '',
         consent: '',
     })
 
     // Holds if submit is clicked.
-    const [submitClicked, setSubmitClicked] = React.useState(false)
+    const [submitClicked, setSubmitClicked] = React.useState(false);
 
-    // Holds if submit should be able to be clicked.
-    const [canSubmit, setCanSubmit] = React.useState(false);
+    // Post the data into the backend
+    const handleSubmit = async (event) => {
+        event.preventDefault(); // Prevent the default form submission
+        console.log(checkForm())
+        if (!checkForm())
+            return;  // If there is an error dont submit
 
-    // Updates all fields values.  
-    // Checks if submit is clickable and updates canSubmit.
-    const handleFieldChange = (name, value, checked) => {
-        setData((prev) => ({
-            ...prev,
-            [name]: name !== checked ? value : checked
-        }));
+        try {
+            await axios.post('http://localhost:5000/signup', {
+                username: data.username,
+                firstname: data.firstname,
+                lastname: data.lastname,
+                email: data.email,
+                phoneNumber: data.phoneNumber,
+                password: data.password,
+                role: data.role,
+                consent: data.consent,
+            });
+
+            handleTransition(TransitionLeft)
+        }
+
+        catch (error) {
+            console.error(error);
+        }
+
+    };
+
+    const checkForm = () => {
         // Check if all fields are error-free and filled
         const areFieldsValid = Object.values(errors).every(error => error === false);
-        const areFieldsFilled = Object.values(data).every(field => field !== '');
-        setCanSubmit(areFieldsValid && areFieldsFilled);
+        const areFieldsFilled =
+            data.username !== '' &&
+            data.firstname !== '' &&
+            data.lastname !== '' &&
+            data.email !== '' &&
+            data.phoneNumber !== '' &&
+            data.password !== '' &&
+            data.passwordValid !== '' &&
+            data.role !== '' &&
+            data.consent;
+
+        console.log(`filled: ${areFieldsFilled}`)
+        console.log(`valid: ${areFieldsValid}`)
+        console.log(data)
+        return areFieldsValid && areFieldsFilled;
+    }
+
+    // Controls the navigation
+    const handleTransition = (Transition) => {
+        setTransition(() => Transition);
+        setAlert(true);
+
+        setTimeout(() => {
+            navigate('/login');
+        }, 3000);
+
     };
+    // Updates all fields values.  
+    // Checks if submit is clickable and updates canSubmit.
+    const handleFieldChange = (event) => {
+        const { name, value, checked } = event.target
+        setData(prevData => {
+            return {
+                ...prevData,
+                [name]: name === "consent" ? checked : value
+            }
+        })
+    }
+
+
 
     const usernameError = (username) => {
         if ((username === '' && submitClicked)) {
-            console.log('username')
             setErrors({ ...errors, username: true })
             setHelperText({ ...helperText, username: 'Username is required.' })
         }
@@ -250,16 +257,17 @@ export default function SignUp() {
 
     const [passwordValidIsClicked, setPasswordValidIsClicked] = React.useState(false);
     const [passwordValidFieldColor, setPasswordValidFieldColor] = React.useState('primary');
+    const [passwordValidHelperText, setPasswordValidHelperText] = React.useState('');
 
     const passwordValidation = (value, password) => {
         if (password === value && passwordValidIsClicked) {
             setErrors({ ...errors, passwordValid: false })
-            setHelperText({ ...helperText, passwordValid: 'The passwords match!' })
+            setPasswordValidHelperText('The passwords match!')
             setPasswordValidFieldColor('success')
         }
         else if (password !== value && passwordValidIsClicked) {
             setErrors({ ...errors, passwordValid: true })
-            setHelperText({ ...helperText, passwordValid: 'The passwords are not the same!' })
+            setPasswordValidHelperText('The passwords are not the same!')
             setPasswordValidFieldColor('error')
         }
     }
@@ -276,7 +284,7 @@ export default function SignUp() {
     }
 
     const consentError = (consent) => {
-        if (consent === '' && submitClicked) {
+        if (consent === false && submitClicked) {
             setErrors({ ...errors, consent: true })
         }
         else {
@@ -332,7 +340,16 @@ export default function SignUp() {
                             Add Photo
                         </Button>
 
-                        <Box component="form" noValidate onSubmit={(e) => { handleSubmit(e); handleTransition(TransitionLeft); }} sx={{ mt: 3 }}>
+                        <Box
+                            component="form"
+                            noValidate
+                            onSubmit=
+                            {(e) => {
+                                setSubmitClicked(true);
+                                handleSubmit(e);
+                            }}
+                            sx={{ mt: 3 }}
+                        >
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
@@ -346,7 +363,7 @@ export default function SignUp() {
                                         label="Username"
                                         error={errors.username}
                                         onChange={(e) => {
-                                            handleFieldChange("username", e.target.value);
+                                            handleFieldChange(e);
                                             usernameError(e.target.value)
                                         }}
                                         helperText={helperText.username}
@@ -363,7 +380,7 @@ export default function SignUp() {
                                         label="First Name"
                                         error={(errors.firstname)}
                                         onChange={(e) => {
-                                            handleFieldChange("firstname", e.target.value);
+                                            handleFieldChange(e);
                                             firstnameError(e.target.value)
                                         }}
                                         helperText={helperText.firstname}
@@ -380,7 +397,7 @@ export default function SignUp() {
                                         label="Last Name"
                                         error={errors.lastname}
                                         onChange={(e) => {
-                                            handleFieldChange("lastname", e.target.value);
+                                            handleFieldChange(e);
                                             lastnameError(e.target.value)
                                         }}
                                         helperText={helperText.lastname}
@@ -398,7 +415,7 @@ export default function SignUp() {
                                         type='email'
                                         error={errors.email}
                                         onChange={(e) => {
-                                            handleFieldChange("email", e.target.value);
+                                            handleFieldChange(e);
                                             emailError(e.target.value)
                                         }}
                                         helperText={helperText.email}
@@ -421,7 +438,7 @@ export default function SignUp() {
                                         }}
                                         error={errors.phoneNumber}
                                         onChange={(e) => {
-                                            handleFieldChange("phoneNumber", e.target.value);
+                                            handleFieldChange(e);
                                             phoneNumberError(e.target.value)
                                         }}
                                         onClick={() => setPhoneNumberIsClicked(true)}
@@ -440,7 +457,7 @@ export default function SignUp() {
                                         type="password"
                                         color={passwordFieldColor}
                                         onChange={(e) => {
-                                            handleFieldChange("password", e.target.value);
+                                            handleFieldChange(e);
                                             validate(e.target.value);
                                             passwordValidation(e.target.value, data.passwordValid)
                                         }}
@@ -460,11 +477,11 @@ export default function SignUp() {
                                         type="password"
                                         color={passwordValidFieldColor}
                                         onChange={(e) => {
-                                            handleFieldChange("passwordValid", e.target.value);
+                                            handleFieldChange(e);
                                             passwordValidation(e.target.value, data.password)
                                         }}
                                         onClick={() => setPasswordValidIsClicked(true)}
-                                        helperText={helperText.passwordValid}
+                                        helperText={passwordValidHelperText}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -477,7 +494,7 @@ export default function SignUp() {
                                             labelId="role"
                                             label="Role"
                                             onChange={(e) => {
-                                                handleFieldChange("role", e.target.value);
+                                                handleFieldChange(e);
                                                 roleError(e.target.value)
                                             }}
                                         >
@@ -494,10 +511,10 @@ export default function SignUp() {
                                             <Checkbox
                                                 id="consent"
                                                 name="consent"
-                                                value={data.consent}
-                                                color={errors.consent ? '#d32f2f' : 'primary'}
+                                                checked={data.consent}
+                                                color={errors.consent ? 'error' : 'primary'}
                                                 onChange={(e) => {
-                                                    handleFieldChange("consent", e.target.checked);
+                                                    handleFieldChange(e);
                                                     consentError(e.target.checked)
                                                 }}
                                                 sx={{ color: errors.consent && '#d32f2f' }}
@@ -549,6 +566,6 @@ export default function SignUp() {
             >
                 <Copyright />
             </Box >
-        </div>
+        </div >
     );
 }

@@ -30,7 +30,6 @@ export default function Login() {
 
     const [alert, setAlert] = React.useState(0);
     const [transition, setTransition] = React.useState(undefined);
-    const [signUp, setSignUp] = React.useState(false);
 
     const handleAlert = (reason) => {
         if (reason === 'clickaway') {
@@ -49,68 +48,73 @@ export default function Login() {
     }
 
 
-    
-    
+
+
     // Holds the values of all the fiedls
     const [data, setData] = React.useState({
         username: '',
         password: '',
-        rememberMe: ''
+        rememberMe: false
     });
-    
+
     // Updates all fields values.  
     // Checks if submit is clickable and updates canSubmit.
-    const handleFieldChange = (name, value, checked) => {
-        setData((prev) => ({
-            ...prev,
-            [name]: name !== checked ? value : checked
-        }));
-    };
-    
+    const handleFieldChange = (event) => {
+        const { name, value, checked } = event.target
+        setData(prevData => {
+            return {
+                ...prevData,
+                [name]: name === "rememberMe" ? checked : value
+            }
+        })
+    }
+
     const [error, setError] = React.useState('');
-    
-    
+
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
+
         try {
             const response = await axios.post('http://localhost:5000/login', {
                 username: data.username,
                 password: data.password,
             });
-            
+
             if (response.data.message === 'Invalid username or password') {
+                handleTransition(TransitionLeft, false);
                 setError('Invalid username or password');
-                
+
             } else if (response.data.message === 'Login successful') {
+                handleTransition(TransitionLeft, true);
                 setError('');
-                setSignUp(true);
             }
-            
+
         } catch (error) {
-            setError('pisw');
+            handleTransition(TransitionLeft, false);
+            setError('piswww!');
             console.error(error);
-            
+
         }
     }
 
 
     // Controls the navigation
-    const handleTransition = (Transition) => {
-        if (signUp) {
+    const handleTransition = (Transition, signedUp) => {
+        if (signedUp) {
             setTransition(() => Transition);
             setAlert(1);
 
             setTimeout(() => {
-                navigate('/login');
+                navigate('/');
             }, 3000);
         }
-        else{
+        else {
             setTransition(() => Transition);
             setAlert(2);
         }
     };
-    
+
     return (
         <div>
             <Navbar />
@@ -131,7 +135,7 @@ export default function Login() {
                         <Typography component="h1" variant="h5">
                             Log in
                         </Typography>
-                        <Box component="form" onSubmit={(e) => { handleSubmit(e); handleTransition(TransitionLeft) }} noValidate sx={{ mt: 1 }}>
+                        <Box component="form" onSubmit={(e) => handleSubmit(e)} noValidate sx={{ mt: 1 }}>
                             <TextField
                                 margin="normal"
                                 required
@@ -143,7 +147,7 @@ export default function Login() {
                                 autoComplete="username"
                                 autoFocus
                                 onChange={(e) => {
-                                    handleFieldChange("username", e.target.value);
+                                    handleFieldChange(e);
                                 }}
                             />
                             <TextField
@@ -157,16 +161,18 @@ export default function Login() {
                                 type="password"
                                 autoComplete="current-password"
                                 onChange={(e) => {
-                                    handleFieldChange("password", e.target.value);
+                                    handleFieldChange(e);
                                 }}
                             />
                             <FormControlLabel
                                 control={
                                     <Checkbox
+                                        id="rememberMe"
+                                        name="rememberMe"
                                         color="primary"
-                                        value={data.rememberMe} 
+                                        checked={data.rememberMe}
                                         onChange={(e) => {
-                                            handleFieldChange("rememberMe", e.target.checked);
+                                            handleFieldChange(e);
                                         }}
                                     />
                                 }
