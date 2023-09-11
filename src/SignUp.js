@@ -101,7 +101,7 @@ export default function SignUp() {
             return;  // If there is an error dont submit
 
         try {
-            await axios.post('http://localhost:5000/signup', {
+            await axios.post('http://localhost:8080/signup', {
                 username: data.username,
                 firstname: data.firstname,
                 lastname: data.lastname,
