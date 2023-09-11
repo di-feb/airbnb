@@ -81,13 +81,12 @@ export default function Login() {
                 password: data.password,
             });
 
-            if (response.data.message === 'Invalid username or password') {
-                handleTransition(TransitionLeft, false);
-                setError('Invalid username or password');
-
-            } else if (response.data.message === 'Login successful') {
+            if (response.status === 200 ) {
                 handleTransition(TransitionLeft, true);
                 setError('');
+            } else {
+                handleTransition(TransitionLeft, false);
+                setError('Invalid username or password');
             }
 
         } catch (error) {
