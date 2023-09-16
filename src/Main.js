@@ -1,70 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import Card from './Card';
-import Papa from 'papaparse';
-import listings from './csv/listings.csv';
-import calendar from './csv/calendar.csv';
+import axios from 'axios';
+import Box from '@mui/material/Box';
+import { Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Main() {
     const [listingData, setListingData] = useState([]);
     const [calendarData, setCalendarData] = useState([]);
     const [availableDates, setAvailableDates] = useState({});
     const [dataReady, setDataReady] = useState(false);
-    
+
     function formatDate(dateString) {
         const months = [
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
         ];
-    
+
         const date = new Date(dateString);
         const day = date.getDate();
         const month = months[date.getMonth()];
-    
+
         return `${day} ${month}`;
     }
 
-    const fetchData = async (csvFilePath) => {
+    const fetchData = async () => {
         try {
-            const response = await fetch(csvFilePath);
-            const text = await response.text();
-            // Use PapaParse to parse the CSV data
-            const parsedData = Papa.parse(text, {
-                header: true,
-                skipEmptyLines: true,
-                delimiter: ',',
-            });
-            // Check for parsing errors
-            if (parsedData.errors.length > 0) {
-                console.error('Error parsing the CSV data:', parsedData.errors);
-                return null;
+            const [listingsResponse, calendarResponse] = await Promise.all([
+                axios.get('http://localhost:8080/listings'),
+                axios.get('http://localhost:8080/calendar'),
+            ]);
+
+            if (listingsResponse.status === 200 && calendarResponse.status === 200) {
+                return {
+                    listings: listingsResponse.data,
+                    calendar: calendarResponse.data,
+                };
             }
-            // Get the records from the parsed data
-            const records = parsedData.data;
-            return records;
         } catch (error) {
-            console.error('Error fetching or parsing the CSV file:', error);
-            return null;
+            console.error(error);
         }
     };
 
     useEffect(() => {
-        async function fetchDataAndSetListingData() {
-            const records = await fetchData(listings);
-            if (records) {
-                setListingData(records);
-            }
-        }
-        async function fetchDataAndSetCalendarData() {
-            const records = await fetchData(calendar);
-            if (records) {
-                setCalendarData(records);
-            }
-        }
+        const fetchDataAndSetData = async () => {
+            try {
+                const { listings, calendar } = await fetchData();
 
-        Promise.all([fetchDataAndSetListingData(), fetchDataAndSetCalendarData()])
-            .then(() => setDataReady(true))
-            .catch((error) => console.error('Error fetching data:', error));
+                if (listings && calendar) {
+                    setListingData(listings);
+                    setCalendarData(calendar);
+                    setDataReady(true);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchDataAndSetData();
     }, []);
+
 
     useEffect(() => {
         // Create a dictionary to store available dates for each listing ID
@@ -104,13 +99,43 @@ export default function Main() {
 
     if (!dataReady) {
         // Data is not ready yet, show loading or placeholder
-        return <div>Loading...</div>;
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="20vh"
+
+            >
+                <img
+                    loading="lazy"
+                    src={require('./images/stitch.png')}
+                    width='400px'
+                    height='500px'
+                    style={{ position: 'absolute', borderRadius:'10%', top:'50%', transform: 'translateY(-50%)' }}
+                >
+                </img>
+
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    flexDirection="row"
+                    zIndex='2'
+                >
+                    <Typography fontSize={20}>
+                        The page is still loading...
+                    </Typography>
+                    <CircularProgress sx={{ maxWidth: '30px', maxHeight: '30px', ml: 2 }} />
+
+                </Box>
+            </Box>
+        );
     }
 
 
     return (
         <div
-            accept=".csv"
             style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',

@@ -134,8 +134,8 @@ export default function Navbar() {
                             display: 'flex',
                             flexDirection: 'column',
                             position: 'absolute',
-                            mt: '20px',
-                            ml: '180px',
+                            left: '10%',
+                            transform: 'translateX(-10%)',
                             width: '500px',
                             height: '180px',
                             borderRadius: '30px',
@@ -209,8 +209,8 @@ export default function Navbar() {
                         display: 'flex',
                         flexDirection: 'column',
                         position: 'absolute',
-                        mt: '20px',
-                        ml: '720px',
+                        left: '70%',
+                        transform: 'translateX(-70%)',
                         width: '340px',
                         height: '300px',
                         borderRadius: '30px',
@@ -224,7 +224,6 @@ export default function Navbar() {
                             id="adults"
                             type='number'
                             label="Number of Adults"
-                            variant="outlined"
                             value={data.numOfAdults}
                             name="numOfAdults"
                             onChange={handleChange}
@@ -234,15 +233,16 @@ export default function Navbar() {
                                 "& .MuiInputBase-root": {
                                     borderRadius: "50px !important",
                                 },
-                                margin: "20px 10px "
+                                margin: "20px 10px"
                             }}
                         />
-                        <Divider />
+
+                        <Divider variant='middle'/>
+
                         <TextField
                             id="children"
                             type='number'
                             label="Number of Children"
-                            variant="outlined"
                             value={data.numOfChildren}
                             name="numOfChildren"
                             onChange={handleChange}
@@ -252,10 +252,12 @@ export default function Navbar() {
                                 "& .MuiInputBase-root": {
                                     borderRadius: "50px !important",
                                 },
-                                margin: "20px 10px "
+                                margin: "20px 10px"
                             }}
                         />
-                        <Divider />
+
+                        <Divider variant='middle'/>
+
                         <TextField
                             id="pets"
                             type='number'

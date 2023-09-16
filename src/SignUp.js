@@ -26,6 +26,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import validator from 'validator'
+import CollectionsIcon from '@mui/icons-material/Collections';
+
 
 const theme = createTheme();
 
@@ -54,6 +56,7 @@ export default function SignUp() {
 
     // Holds the values of all the fiedls
     const [data, setData] = React.useState({
+        profilePicture: '',
         username: '',
         firstname: '',
         lastname: '',
@@ -101,7 +104,7 @@ export default function SignUp() {
             return;  // If there is an error dont submit
 
         try {
-            await axios.post('http://localhost:8080/signup', {
+            const response = await axios.post('http://localhost:8080/signup', {
                 username: data.username,
                 firstname: data.firstname,
                 lastname: data.lastname,
@@ -111,8 +114,8 @@ export default function SignUp() {
                 role: data.role,
                 consent: data.consent,
             });
-
-            handleTransition(TransitionLeft)
+            if (response.status === 200)
+                handleTransition(TransitionLeft)
         }
 
         catch (error) {
@@ -120,6 +123,29 @@ export default function SignUp() {
         }
 
     };
+
+    const handleFileUpload = async (event) => {
+
+        let file = event.target.files[0];
+        if (file === null || file.length === 0) return;
+
+        try {
+            const response = await axios.post('http://localhost:8080/upload-profile-picture', {
+                profilePicture: file
+            });
+            if (response.status === 200) {
+                file = response.data
+            }
+            //Todo show error ///////////////
+            ////////////////////////////////////////////
+
+            setData({ ...data, profilePicture: file.name });
+            event.target.value = null;
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
 
     const checkForm = () => {
         // Check if all fields are error-free and filled
@@ -292,6 +318,8 @@ export default function SignUp() {
         }
     }
 
+    const fileInputRef = React.useRef(null);
+
 
 
 
@@ -317,31 +345,10 @@ export default function SignUp() {
                             Sign up
                         </Typography>
 
-                        <Avatar
-                            alt="Remy Sharp"
-                            src={require("./images/avatar.png")}
-                            sx={{
-                                width: '120px',
-                                height: '120px',
-                                mt: 5
-                            }} />
-                        <Button
-                            variant="contained"
-                            endIcon={<PhotoCamera />}
-                            size='small'
-                            color="info"
-                            sx={{
-
-                                mt: '-12px',
-                                textTransform: 'none'
-                            }}
-
-                        >
-                            Add Photo
-                        </Button>
 
                         <Box
                             component="form"
+                            encType="multipart/form-data"
                             noValidate
                             onSubmit=
                             {(e) => {
@@ -350,7 +357,103 @@ export default function SignUp() {
                             }}
                             sx={{ mt: 3 }}
                         >
+
+                            <form onSubmit={handleSubmit} encType="multipart/form-data">
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/png, image/jpeg"
+                                    name="profilePicture"
+                                    id="proficePicture"
+                                    onChange={handleFileUpload}
+                                    style={{ display: 'none' }}
+                                    multiple
+                                />
+                            </form>
                             <Grid container spacing={2}>
+                                {data.profilePicture === '' &&
+                                    <Grid item container justifyContent="center" alignItems="center" >
+                                        <Box>
+                                            <Avatar
+                                                alt="Profile picture avatar"
+                                                src={require("./images/avatar.png")}
+                                                sx={{
+                                                    width: '120px',
+                                                    height: '120px',
+                                                    mt: 5
+                                                }} />
+                                            <Button
+                                                variant="contained"
+                                                endIcon={<PhotoCamera />}
+                                                size='small'
+                                                color="info"
+                                                onClick={() => fileInputRef.current.click()}
+                                                sx={{
+
+                                                    mt: '-12px',
+                                                    textTransform: 'none'
+                                                }}
+
+                                            >
+                                                Add Picture
+                                            </Button>
+                                        </Box>
+                                    </Grid>
+                                }
+
+                                {data.profilePicture !== '' &&
+                                    <Grid item container justifyContent="center" alignItems="center" direction='column' >
+                                        <Avatar
+                                            alt="Profile picture avatar"
+                                            // src={require(data.profilePicture)}
+                                            sx={{
+                                                width: '120px',
+                                                height: '120px',
+                                                mb: 3
+                                            }}
+                                        >
+                                        </Avatar>
+                                        <Box
+                                            display='flex'
+                                            flexDirection='row'
+                                            alignItems='center'
+                                            justifyContent='space-around'
+                                            spacing='2'
+                                            width='300px'
+
+                                        >
+                                            <Button
+                                                variant="contained"
+                                                endIcon={<PhotoCamera />}
+                                                size='small'
+                                                color="info"
+                                                onClick={() => fileInputRef.current.click()}
+                                                sx={{
+
+                                                    mt: '-12px',
+                                                    textTransform: 'none'
+                                                }}
+
+                                            >
+                                                Change picture
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                endIcon={<CollectionsIcon />}
+                                                size='small'
+                                                color="info"
+                                                sx={{
+
+                                                    mt: '-12px',
+                                                    textTransform: 'none'
+                                                }}
+
+                                            >
+                                                See your picture
+                                            </Button>
+                                        </Box>
+                                    </Grid>
+                                }
                                 <Grid item xs={12}>
                                     <TextField
                                         required
