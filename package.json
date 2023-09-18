@@ -15,9 +15,9 @@
         "@testing-library/user-event": "^13.5.0",
         "axios": "^1.5.0",
         "dayjs": "^1.11.7",
+        "leaflet": "^1.9.3",
         "mysql2": "^3.6.0",
         "querystring-es3": "^0.2.1",
-        "leaflet": "^1.9.3",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-leaflet": "^4.2.1",
@@ -54,6 +54,7 @@
     },
     "devDependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-        "@babel/preset-react": "^7.22.15"
+        "@babel/preset-react": "^7.22.15",
+        "file-loader": "^6.2.0"
     }
 }

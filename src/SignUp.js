@@ -28,7 +28,6 @@ import axios from 'axios';
 import validator from 'validator'
 import CollectionsIcon from '@mui/icons-material/Collections';
 
-
 const theme = createTheme();
 
 export default function SignUp() {
@@ -56,7 +55,7 @@ export default function SignUp() {
 
     // Holds the values of all the fiedls
     const [data, setData] = React.useState({
-        profilePicture: '',
+        profilePicture: null,
         username: '',
         firstname: '',
         lastname: '',
@@ -124,22 +123,31 @@ export default function SignUp() {
 
     };
 
+    const [imagePreview, setImagePreview] = React.useState(null);
+    
     const handleFileUpload = async (event) => {
 
         let file = event.target.files[0];
         if (file === null || file.length === 0) return;
 
+        const formData = new FormData();
+        formData.append('profilePicture', file);
+
+        setImagePreview(URL.createObjectURL(file));
+
         try {
-            const response = await axios.post('http://localhost:8080/upload-profile-picture', {
-                profilePicture: file
+            const response = await axios.post('http://localhost:8080/upload-profile-picture', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Set the content type
+                },
             });
             if (response.status === 200) {
-                file = response.data
+                setData({ ...data, profilePicture: response.data });
             }
             //Todo show error ///////////////
             ////////////////////////////////////////////
 
-            setData({ ...data, profilePicture: file.name });
+
             event.target.value = null;
         }
         catch (error) {
@@ -320,6 +328,32 @@ export default function SignUp() {
 
     const fileInputRef = React.useRef(null);
 
+    const backendPath = '../../airbnb_api';
+    let imagePath = null;
+    if (data.profilePicture !== null) {
+        imagePath = `${backendPath}${data.profilePicture}`;
+    }
+
+    function showProfilePicture(imagePath) {
+        // Open the image in a new window or popup
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          // Set the content of the new window to display the image
+          newWindow.document.write(`
+            <html>
+              <head>
+                <title>Profile Picture</title>
+              </head>
+              <body>
+                <img src="${imagePath}" alt="Profile Picture" />
+              </body>
+            </html>
+          `);
+        } else {
+          // Handle the case where popups are blocked
+          alert('Please allow pop-ups to view the profile picture.');
+        }
+      }
 
 
 
@@ -346,6 +380,8 @@ export default function SignUp() {
                         </Typography>
 
 
+
+
                         <Box
                             component="form"
                             encType="multipart/form-data"
@@ -357,21 +393,19 @@ export default function SignUp() {
                             }}
                             sx={{ mt: 3 }}
                         >
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/png, image/jpeg"
+                                name="profilePicture"
+                                id="proficePicture"
+                                onChange={handleFileUpload}
+                                style={{ display: 'none' }}
+                                multiple
+                            />
 
-                            <form onSubmit={handleSubmit} encType="multipart/form-data">
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/png, image/jpeg"
-                                    name="profilePicture"
-                                    id="proficePicture"
-                                    onChange={handleFileUpload}
-                                    style={{ display: 'none' }}
-                                    multiple
-                                />
-                            </form>
                             <Grid container spacing={2}>
-                                {data.profilePicture === '' &&
+                                {data.profilePicture === null &&
                                     <Grid item container justifyContent="center" alignItems="center" >
                                         <Box>
                                             <Avatar
@@ -401,11 +435,11 @@ export default function SignUp() {
                                     </Grid>
                                 }
 
-                                {data.profilePicture !== '' &&
+                                {data.profilePicture !== null &&
                                     <Grid item container justifyContent="center" alignItems="center" direction='column' >
                                         <Avatar
-                                            alt="Profile picture avatar"
-                                            // src={require(data.profilePicture)}
+                                            alt="Profile picture"
+                                            src={imagePreview}
                                             sx={{
                                                 width: '120px',
                                                 height: '120px',
@@ -442,6 +476,7 @@ export default function SignUp() {
                                                 endIcon={<CollectionsIcon />}
                                                 size='small'
                                                 color="info"
+                                                onClick={(imagePath) => showProfilePicture(imagePath)}
                                                 sx={{
 
                                                     mt: '-12px',
