@@ -69,6 +69,7 @@ export default function SignUp() {
 
     // Holds what field is in error state
     const [errors, setErrors] = React.useState({
+        profilePicture: false,
         username: false,
         firstname: false,
         lastname: false,
@@ -82,6 +83,7 @@ export default function SignUp() {
 
     // Holds all the helper texts
     const [helperText, setHelperText] = React.useState({
+        profilePicture: '',
         username: '',
         firstname: '',
         lastname: '',
@@ -92,9 +94,6 @@ export default function SignUp() {
         consent: '',
     })
 
-    // Holds if submit is clicked.
-    const [submitClicked, setSubmitClicked] = React.useState(false);
-
     // Post the data into the backend
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission
@@ -102,57 +101,41 @@ export default function SignUp() {
         if (!checkForm())
             return;  // If there is an error dont submit
 
-        try {
-            const response = await axios.post('http://localhost:8080/signup', {
-                username: data.username,
-                firstname: data.firstname,
-                lastname: data.lastname,
-                email: data.email,
-                phoneNumber: data.phoneNumber,
-                password: data.password,
-                role: data.role,
-                consent: data.consent,
-            });
-            if (response.status === 200)
-                handleTransition(TransitionLeft)
-        }
-
-        catch (error) {
-            console.error(error);
-        }
-
-    };
-
-    const [imagePreview, setImagePreview] = React.useState(null);
-    
-    const handleFileUpload = async (event) => {
-
-        let file = event.target.files[0];
-        if (file === null || file.length === 0) return;
-
+        // Create a FormData object
         const formData = new FormData();
-        formData.append('profilePicture', file);
-
-        setImagePreview(URL.createObjectURL(file));
+        formData.append('profilePicture', data.profilePicture);
+        formData.append('username', data.username);
+        formData.append('firstname', data.firstname);
+        formData.append('lastname', data.lastname);
+        formData.append('email', data.email);
+        formData.append('phoneNumber', data.phoneNumber);
+        formData.append('password', data.password);
+        formData.append('role', data.role);
+        formData.append('consent', data.consent);
 
         try {
-            const response = await axios.post('http://localhost:8080/upload-profile-picture', formData, {
+            const response = await axios.post('http://localhost:8080/signup', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type
                 },
             });
-            if (response.status === 200) {
-                setData({ ...data, profilePicture: response.data });
-            }
-            //Todo show error ///////////////
-            ////////////////////////////////////////////
-
-
-            event.target.value = null;
-        }
-        catch (error) {
+            if (response.status === 200)
+                handleTransition(TransitionLeft)
+        } catch (error) {
             console.error(error);
         }
+    };
+
+
+    const [imagePreview, setImagePreview] = React.useState(null);
+
+    const handleFileUpload = async (event) => {
+
+        let file = event.target.files[0];
+        if (file === null) return;
+
+        setData({ ...data, profilePicture: file });
+        setImagePreview(URL.createObjectURL(file));
     }
 
     const checkForm = () => {
@@ -180,9 +163,16 @@ export default function SignUp() {
         setTransition(() => Transition);
         setAlert(true);
 
-        setTimeout(() => {
-            navigate('/login');
-        }, 3000);
+        if (data.role === 'Host') {
+            setTimeout(() => {
+                navigate('/host');
+            }, 3000);
+        }
+        else {
+            setTimeout(() => {
+                navigate('/login');
+            }, 3000);
+        }
 
     };
     // Updates all fields values.  
@@ -197,94 +187,114 @@ export default function SignUp() {
         })
     }
 
+    const profilePictureError = (profilePicture, submitClicked) => {
+        if (profilePicture === null && submitClicked) {
+            setErrors((prev) => ({ ...prev, profilePicture: true }))
+            setHelperText((prev) => ({ ...prev, profilePicture: 'Profile picture is required.' }))
+        }
+        else {
+            setErrors((prev) => ({ ...prev, profilePicture: false }))
+            setHelperText((prev) => ({ ...prev, profilePicture: '' }))
+        }
+
+    }
 
 
-    const usernameError = (username) => {
-        if ((username === '' && submitClicked)) {
-            setErrors({ ...errors, username: true })
-            setHelperText({ ...helperText, username: 'Username is required.' })
+    const usernameError = (username, submitClicked) => {
+        if (username === '' && submitClicked) {
+            setErrors((prev) => ({ ...prev, username: true }))
+            setHelperText((prev) => ({ ...prev, username: 'Username is required.' }))
         }
         else if (username.length > 10) {
-            setErrors({ ...errors, username: true })
-            setHelperText({ ...helperText, username: 'Username must be smaller than 10 characters.' })
+            setErrors((prev) => ({ ...prev, username: true }))
+            setHelperText((prev) => ({ ...prev, username: 'Username must be smaller than 10 characters.' }))
         }
         else {
-            setErrors({ ...errors, username: false })
-            setHelperText({ ...helperText, username: '' })
+            setErrors((prev) => ({ ...prev, username: false }))
+            setHelperText((prev) => ({ ...prev, username: '' }))
         }
     }
 
-    const firstnameError = (firstname) => {
+    const firstnameError = (firstname, submitClicked) => {
         if (firstname === '' && submitClicked) {
-            setErrors({ ...errors, firstname: true })
-            setHelperText({ ...helperText, firstname: 'Firstname is required.' })
+            setErrors((prev) => ({ ...prev, firstname: true }))
+            setHelperText((prev) => ({ ...prev, firstname: 'Firstname is required.' }))
         }
         else {
-            setErrors({ ...errors, firstname: false })
-            setHelperText({ ...helperText, firstname: '' })
+            setErrors((prev) => ({ ...prev, firstname: false }))
+            setHelperText((prev) => ({ ...prev, firstname: '' }))
         }
     }
 
-    const lastnameError = (lastname) => {
+    const lastnameError = (lastname, submitClicked) => {
         if (lastname === '' && submitClicked) {
-            setErrors({ ...errors, lastname: true })
-            setHelperText({ ...helperText, lastname: 'Lastname is required.' })
+            setErrors((prev) => ({ ...prev, lastname: true }))
+            setHelperText((prev) => ({ ...prev, lastname: 'Lastname is required.' }))
         }
         else {
-            setErrors({ ...errors, lastname: false })
-            setHelperText({ ...helperText, lastname: '' })
+            setErrors((prev) => ({ ...prev, lastname: false }))
+            setHelperText((prev) => ({ ...prev, lastname: '' }))
         }
     }
 
-    const emailError = (email) => {
+    const emailError = (email, submitClicked) => {
         const atIndex = email.indexOf('@');
 
         if (!email.length && submitClicked) {
-            setErrors({ ...errors, email: true })
-            setHelperText({ ...helperText, email: 'Email is required.' })
+            setErrors((prev) => ({ ...prev, email: true }))
+            setHelperText((prev) => ({ ...prev, email: 'Email is required.' }))
         }
         else if (atIndex === -1 && email.length) {
-            setErrors({ ...errors, email: true })
-            setHelperText({ ...helperText, email: 'Email must contain "@" character.' })
+            setErrors((prev) => ({ ...prev, email: true }))
+            setHelperText((prev) => ({ ...prev, email: 'Email must contain "@" character.' }))
         }
         else if ((atIndex === 0 || atIndex === email.length - 1) && email.length) {
-            setErrors({ ...errors, email: true })
-            setHelperText({ ...helperText, email: 'Invalid email format.' })
+            setErrors((prev) => ({ ...prev, email: true }))
+            setHelperText((prev) => ({ ...prev, email: 'Invalid email format.' }))
         }
         else {
-            setErrors({ ...errors, email: false })
-            setHelperText({ ...helperText, email: '' })
+            setErrors((prev) => ({ ...prev, email: false }))
+            setHelperText((prev) => ({ ...prev, email: '' }))
         }
     }
 
 
     const [phoneNumberIsClicked, setPhoneNumberIsClicked] = React.useState(false)
 
-    const phoneNumberError = (phoneNumber) => {
+    const phoneNumberError = (phoneNumber, submitClicked) => {
         if (phoneNumber.length !== 10 && phoneNumberIsClicked) {
-            setErrors({ ...errors, phoneNumber: true })
-            setHelperText({ ...helperText, phoneNumber: 'Phone Number must have 10 digits.' })
+            setErrors((prev) => ({ ...prev, phoneNumber: true }))
+            setHelperText((prev) => ({ ...prev, phoneNumber: 'Phone Number must have 10 digits.' }))
+        }
+        else if (phoneNumber === '' && submitClicked) {
+            setErrors((prev) => ({ ...prev, phoneNumber: true }))
+            setHelperText((prev) => ({ ...prev, phoneNumber: 'Phone Number is required.' }))
         }
         else {
-            setErrors({ ...errors, phoneNumber: false })
-            setHelperText({ ...helperText, phoneNumber: '' })
+            setErrors((prev) => ({ ...prev, phoneNumber: false }))
+            setHelperText((prev) => ({ ...prev, phoneNumber: '' }))
         }
     }
 
     const [passwordFieldColor, setPasswordFieldColor] = React.useState('primary');
 
-    const validate = (value) => {
+    const validate = (value, submitClicked) => {
         if (validator.isStrongPassword(value, {
             minLength: 8, minLowercase: 1,
             minUppercase: 0, minNumbers: 1, minSymbols: 1
         })) {
-            setErrors({ ...errors, password: false })
-            setHelperText({ ...helperText, password: 'Strong Password' })
+            setErrors((prev) => ({ ...prev, password: false }))
+            setHelperText((prev) => ({ ...prev, password: 'Strong Password' }))
             setPasswordFieldColor('success')
         }
+        else if (value === '' && submitClicked) {
+            setErrors((prev) => ({ ...prev, password: true }))
+            setHelperText((prev) => ({ ...prev, password: 'Password is required' }))
+            setPasswordFieldColor('error')
+        }
         else {
-            setErrors({ ...errors, password: true })
-            setHelperText({ ...helperText, password: 'Type at least 8 characters, 1 number and 1 symbol (!, ?, #)' })
+            setErrors((prev) => ({ ...prev, password: true }))
+            setHelperText((prev) => ({ ...prev, password: 'Type at least 8 characters, 1 number and 1 symbol (!, ?, #)' }))
             setPasswordFieldColor('error')
         }
     }
@@ -293,67 +303,79 @@ export default function SignUp() {
     const [passwordValidFieldColor, setPasswordValidFieldColor] = React.useState('primary');
     const [passwordValidHelperText, setPasswordValidHelperText] = React.useState('');
 
-    const passwordValidation = (value, password) => {
+    const passwordValidation = (value, password, submitClicked) => {
         if (password === value && passwordValidIsClicked) {
-            setErrors({ ...errors, passwordValid: false })
+            setErrors((prev) => ({ ...prev, passwordValid: false }))
             setPasswordValidHelperText('The passwords match!')
             setPasswordValidFieldColor('success')
         }
-        else if (password !== value && passwordValidIsClicked) {
-            setErrors({ ...errors, passwordValid: true })
+        else if (value === '' && submitClicked) {
+            setErrors((prev) => ({ ...prev, passwordValid: true }))
+            setPasswordValidHelperText('The password validation field is required.')
+            setPasswordValidFieldColor('error')
+        }
+        else if (password !== value && password != '') {
+            setErrors((prev) => ({ ...prev, passwordValid: true }))
             setPasswordValidHelperText('The passwords are not the same!')
             setPasswordValidFieldColor('error')
         }
     }
 
-    const roleError = (role) => {
+    const roleError = (role, submitClicked) => {
         if (role === '' && submitClicked) {
-            setErrors({ ...errors, role: true })
-            setHelperText({ ...helperText, role: 'Role is required.' })
+            setErrors((prev) => ({ ...prev, role: true }))
+            setHelperText((prev) => ({ ...prev, role: 'Role is required.' }))
         }
         else {
-            setErrors({ ...errors, role: false })
-            setHelperText({ ...helperText, role: '' })
+            setErrors((prev) => ({ ...prev, role: false }))
+            setHelperText((prev) => ({ ...prev, role: '' }))
         }
     }
 
-    const consentError = (consent) => {
+    const consentError = (consent, submitClicked) => {
         if (consent === false && submitClicked) {
-            setErrors({ ...errors, consent: true })
+            setErrors((prev) => ({ ...prev, consent: true }))
         }
         else {
-            setErrors({ ...errors, consent: false })
+            setErrors((prev) => ({ ...prev, consent: false }))
         }
     }
 
     const fileInputRef = React.useRef(null);
 
-    const backendPath = '../../airbnb_api';
-    let imagePath = null;
-    if (data.profilePicture !== null) {
-        imagePath = `${backendPath}${data.profilePicture}`;
-    }
-
-    function showProfilePicture(imagePath) {
+    function showProfilePicture() {
         // Open the image in a new window or popup
         const newWindow = window.open('', '_blank');
         if (newWindow) {
-          // Set the content of the new window to display the image
-          newWindow.document.write(`
+            // Set the content of the new window to display the image
+            newWindow.document.write(`
             <html>
-              <head>
+                <head>
                 <title>Profile Picture</title>
-              </head>
-              <body>
-                <img src="${imagePath}" alt="Profile Picture" />
-              </body>
+                <style>
+                    body {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    margin: 0;
+                    }
+                    img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    }
+                </style>
+                </head>
+                <body>
+                <img src="${imagePreview}" alt="Profile Picture" />
+                </body> 
             </html>
           `);
         } else {
-          // Handle the case where popups are blocked
-          alert('Please allow pop-ups to view the profile picture.');
+            // Handle the case where popups are blocked
+            alert('Please allow pop-ups to view the profile picture.');
         }
-      }
+    }
 
 
 
@@ -388,8 +410,18 @@ export default function SignUp() {
                             noValidate
                             onSubmit=
                             {(e) => {
-                                setSubmitClicked(true);
                                 handleSubmit(e);
+                                profilePictureError(data.profilePicture, true)
+                                usernameError(data.username, true);
+                                firstnameError(data.firstname, true);
+                                lastnameError(data.lastname, true);
+                                emailError(data.email, true);
+                                phoneNumberError(data.phoneNumber, true);
+                                validate(data.password, true);
+                                passwordValidation(data.passwordValid, data.password, true);
+                                roleError(data.role, true);
+                                consentError(data.consent, true);
+
                             }}
                             sx={{ mt: 3 }}
                         >
@@ -398,7 +430,7 @@ export default function SignUp() {
                                 type="file"
                                 accept="image/png, image/jpeg"
                                 name="profilePicture"
-                                id="proficePicture"
+                                id="profilePicture"
                                 onChange={handleFileUpload}
                                 style={{ display: 'none' }}
                                 multiple
@@ -406,8 +438,8 @@ export default function SignUp() {
 
                             <Grid container spacing={2}>
                                 {data.profilePicture === null &&
-                                    <Grid item container justifyContent="center" alignItems="center" >
-                                        <Box>
+                                    <Grid item container  justifyContent="center" alignItems="center" textAlign='center'>
+                                        <Box display= 'flex' flexDirection= 'column' alignItems= 'center'>
                                             <Avatar
                                                 alt="Profile picture avatar"
                                                 src={require("./images/avatar.png")}
@@ -420,7 +452,7 @@ export default function SignUp() {
                                                 variant="contained"
                                                 endIcon={<PhotoCamera />}
                                                 size='small'
-                                                color="info"
+                                                color={errors.profilePicture ? "error" : "info"}
                                                 onClick={() => fileInputRef.current.click()}
                                                 sx={{
 
@@ -431,6 +463,12 @@ export default function SignUp() {
                                             >
                                                 Add Picture
                                             </Button>
+                                            
+                                            {errors.profilePicture && 
+                                                <FormHelperText error={true}>
+                                                    {helperText.profilePicture}
+                                                </FormHelperText>
+                                            }
                                         </Box>
                                     </Grid>
                                 }
@@ -476,7 +514,7 @@ export default function SignUp() {
                                                 endIcon={<CollectionsIcon />}
                                                 size='small'
                                                 color="info"
-                                                onClick={(imagePath) => showProfilePicture(imagePath)}
+                                                onClick={() => showProfilePicture()}
                                                 sx={{
 
                                                     mt: '-12px',
@@ -593,6 +631,7 @@ export default function SignUp() {
                                         value={data.password}
                                         label="Password"
                                         type="password"
+                                        error={errors.password}
                                         color={passwordFieldColor}
                                         onChange={(e) => {
                                             handleFieldChange(e);
@@ -613,6 +652,7 @@ export default function SignUp() {
                                         value={data.passwordValid}
                                         label="Confirm Password"
                                         type="password"
+                                        error={errors.passwordValid}
                                         color={passwordValidFieldColor}
                                         onChange={(e) => {
                                             handleFieldChange(e);
@@ -623,7 +663,7 @@ export default function SignUp() {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <FormControl fullWidth color={errors.role ? 'error' : 'primary'}>
+                                    <FormControl fullWidth error={errors.role} >
                                         <InputLabel id="role">Role</InputLabel>
                                         <Select
                                             id="role"

@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar'
 import Footer from './Footer'
 import axios from 'axios';
-
+import jwt_decode from 'jwt-decode';
 
 
 const theme = createTheme();
@@ -71,6 +71,22 @@ export default function Login() {
 
     const [error, setError] = React.useState('');
 
+    const checkUserRole = () => {
+        // Decode the JWT token
+        const accessToken = localStorage.getItem('accessToken');
+        if(accessToken === null)
+            return null;
+        const decodedToken = jwt_decode(accessToken);
+
+        // Access the user's role from the decoded token
+        const role = decodedToken.role;
+        console.log(role)
+        if (role === 'Tenant')
+            return 'Tenant'
+        else
+            return 'Host'
+    }
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -81,8 +97,16 @@ export default function Login() {
                 password: data.password,
             });
 
-            if (response.status === 200 ) {
-                handleTransition(TransitionLeft, true);
+            if (response.status === 200) {
+                console.log(response.data)
+                const { access_token, refresh_token } = response.data;
+                localStorage.setItem('accessToken', access_token);
+                localStorage.setItem('refreshToken', refresh_token);
+                console.log(access_token)
+
+                const role = checkUserRole();
+
+                handleTransition(TransitionLeft, true, role);
                 setError('');
             } else {
                 handleTransition(TransitionLeft, false);
@@ -90,17 +114,22 @@ export default function Login() {
             }
 
         } catch (error) {
-            handleTransition(TransitionLeft, false);
-            setError('piswww!');
             console.error(error);
-
         }
     }
 
 
     // Controls the navigation
-    const handleTransition = (Transition, signedUp) => {
-        if (signedUp) {
+    const handleTransition = (Transition, signedUp, role) => {
+        if (signedUp && role === 'Host') {
+            setTransition(() => Transition);
+            setAlert(1);
+
+            setTimeout(() => {
+                navigate('/hostHome');
+            }, 3000);
+        }
+        else if (signedUp && role === 'Tenant') {
             setTransition(() => Transition);
             setAlert(1);
 
