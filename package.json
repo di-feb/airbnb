@@ -32,6 +32,7 @@
     },
     "scripts": {
         "start": "react-scripts start",
+        "start-https": "HTTPS=true SSL_CRT_FILE=/home/feb/airbnb_api/src/main/resources/keystore/cert.crt SSL_KEY_FILE=/home/feb/airbnb_api/src/main/resources/keystore/private-key.key react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"

@@ -108,6 +108,7 @@ export default function Main() {
 
             >
                 <img
+                    alt='stich drawing (fun picrure for loading!)'
                     loading="lazy"
                     src={require('./images/stitch.png')}
                     width='400px'

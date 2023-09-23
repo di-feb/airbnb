@@ -57,6 +57,18 @@ export default function Login() {
         rememberMe: false
     });
 
+    // Holds the values of all the fiedls
+    const [errors, setErrors] = React.useState({
+        username: false,
+        password: false,
+    });
+
+    // Holds the values of all the fiedls
+    const [helperText, setHelperText] = React.useState({
+        username: '',
+        password: '',
+    });
+
     // Updates all fields values.  
     // Checks if submit is clickable and updates canSubmit.
     const handleFieldChange = (event) => {
@@ -69,12 +81,12 @@ export default function Login() {
         })
     }
 
-    const [error, setError] = React.useState('');
+    const [errorMessage, setErrorMessage] = React.useState('');
 
     const checkUserRole = () => {
         // Decode the JWT token
         const accessToken = localStorage.getItem('accessToken');
-        if(accessToken === null)
+        if (accessToken === null)
             return null;
         const decodedToken = jwt_decode(accessToken);
 
@@ -87,41 +99,9 @@ export default function Login() {
             return 'Host'
     }
 
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        try {
-            const response = await axios.post('http://localhost:8080/login', {
-                username: data.username,
-                password: data.password,
-            });
-
-            if (response.status === 200) {
-                console.log(response.data)
-                const { access_token, refresh_token } = response.data;
-                localStorage.setItem('accessToken', access_token);
-                localStorage.setItem('refreshToken', refresh_token);
-                console.log(access_token)
-
-                const role = checkUserRole();
-
-                handleTransition(TransitionLeft, true, role);
-                setError('');
-            } else {
-                handleTransition(TransitionLeft, false);
-                setError('Invalid username or password');
-            }
-
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-
     // Controls the navigation
     const handleTransition = (Transition, signedUp, role) => {
-        if (signedUp && role === 'Host') {
+        if (signedUp && (role === 'Host' || role === 'Host_Tenant')) {
             setTransition(() => Transition);
             setAlert(1);
 
@@ -143,6 +123,69 @@ export default function Login() {
         }
     };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const areFieldsValid = Object.values(errors).every(error => error === false);
+
+        if(!areFieldsValid)
+            return
+        try {
+            const response = await axios.post('http://localhost:8080/login', {
+                username: data.username,
+                password: data.password,
+            });
+
+            if (response.status === 200) {
+                console.log(response.data)
+                const { access_token, refresh_token } = response.data;
+                localStorage.setItem('accessToken', access_token);
+                localStorage.setItem('refreshToken', refresh_token);
+                console.log(access_token)
+
+                const role = checkUserRole();
+
+                handleTransition(TransitionLeft, true, role);
+                setErrorMessage('');
+            }
+        } catch (error) {
+            if (error.response.status === 401) {
+                handleTransition(TransitionLeft, false);
+                setErrorMessage('Invalid username of password');
+            }
+            else if (error.response.status === 401) {
+                handleTransition(TransitionLeft, false);
+                setErrorMessage('Your registration is pending approval from the administrator');
+            }
+        }
+    }
+
+
+    const usernameError = (username, submitClicked) => {
+        if (username === '' && submitClicked) {
+            setErrors((prev) => ({ ...prev, username: true }))
+            setHelperText((prev) => ({ ...prev, username: 'Username is required.' }))
+        }
+        else {
+            setErrors((prev) => ({ ...prev, username: false }))
+            setHelperText((prev) => ({ ...prev, username: '' }))
+        }
+    }
+    
+    const passwordError = (password, submitClicked) => {
+        if (password === '' && submitClicked) {
+            setErrors((prev) => ({ ...prev, password: true }))
+            setHelperText((prev) => ({ ...prev, password: 'Password is required' }))
+        }
+        else{
+            setErrors((prev) => ({ ...prev, password: false }))
+            setHelperText((prev) => ({ ...prev, password: 'Password is required' }))
+        }
+    }
+
+
+
+
     return (
         <div>
             <Navbar />
@@ -163,7 +206,16 @@ export default function Login() {
                         <Typography component="h1" variant="h5">
                             Log in
                         </Typography>
-                        <Box component="form" onSubmit={(e) => handleSubmit(e)} noValidate sx={{ mt: 1 }}>
+                        <Box
+                            component="form"
+                            noValidate
+                            onSubmit={(e) => {
+                                handleSubmit(e);
+                                usernameError(data.username, true);
+                                passwordError(data.password, true);
+                            }}
+                            sx={{ mt: 1 }}>
+                            
                             <TextField
                                 margin="normal"
                                 required
@@ -177,6 +229,8 @@ export default function Login() {
                                 onChange={(e) => {
                                     handleFieldChange(e);
                                 }}
+                                error={errors.username}
+                                helperText={helperText.username}
                             />
                             <TextField
                                 margin="normal"
@@ -191,6 +245,8 @@ export default function Login() {
                                 onChange={(e) => {
                                     handleFieldChange(e);
                                 }}
+                                error={errors.password}
+                                helperText={helperText.password}
                             />
                             <FormControlLabel
                                 control={
@@ -246,7 +302,7 @@ export default function Login() {
                                     TransitionComponent={transition}
                                 >
                                     <Alert onClose={handleAlert} severity="error" sx={{ width: '100%', alignItems: "center" }}>
-                                        {error}
+                                        {errorMessage}
                                     </Alert>
                                 </Snackbar>
                             }
@@ -258,6 +314,7 @@ export default function Login() {
         </div>
     );
 }
+
 
 
 

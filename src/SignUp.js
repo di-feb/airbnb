@@ -118,6 +118,9 @@ export default function SignUp() {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type
                 },
+                // httpsAgent: new https.Agent({
+                //     rejectUnauthorized: false, // Ignore certificate validation errors (not recommended for production)
+                // }),
             });
             if (response.status === 200)
                 handleTransition(TransitionLeft)
@@ -152,9 +155,6 @@ export default function SignUp() {
             data.role !== '' &&
             data.consent;
 
-        console.log(`filled: ${areFieldsFilled}`)
-        console.log(`valid: ${areFieldsValid}`)
-        console.log(data)
         return areFieldsValid && areFieldsFilled;
     }
 
@@ -314,7 +314,7 @@ export default function SignUp() {
             setPasswordValidHelperText('The password validation field is required.')
             setPasswordValidFieldColor('error')
         }
-        else if (password !== value && password != '') {
+        else if (password !== value && password !== '') {
             setErrors((prev) => ({ ...prev, passwordValid: true }))
             setPasswordValidHelperText('The passwords are not the same!')
             setPasswordValidFieldColor('error')
@@ -438,8 +438,8 @@ export default function SignUp() {
 
                             <Grid container spacing={2}>
                                 {data.profilePicture === null &&
-                                    <Grid item container  justifyContent="center" alignItems="center" textAlign='center'>
-                                        <Box display= 'flex' flexDirection= 'column' alignItems= 'center'>
+                                    <Grid item container justifyContent="center" alignItems="center" textAlign='center'>
+                                        <Box display='flex' flexDirection='column' alignItems='center'>
                                             <Avatar
                                                 alt="Profile picture avatar"
                                                 src={require("./images/avatar.png")}
@@ -447,7 +447,8 @@ export default function SignUp() {
                                                     width: '120px',
                                                     height: '120px',
                                                     mt: 5
-                                                }} />
+                                                }}
+                                            />
                                             <Button
                                                 variant="contained"
                                                 endIcon={<PhotoCamera />}
@@ -463,8 +464,8 @@ export default function SignUp() {
                                             >
                                                 Add Picture
                                             </Button>
-                                            
-                                            {errors.profilePicture && 
+
+                                            {errors.profilePicture &&
                                                 <FormHelperText error={true}>
                                                     {helperText.profilePicture}
                                                 </FormHelperText>
@@ -678,6 +679,7 @@ export default function SignUp() {
                                         >
                                             <MenuItem value={'Host'}>Host</MenuItem>
                                             <MenuItem value={'Tenant'}>Tenant</MenuItem>
+                                            <MenuItem value={'Host_Tenant'}>Host & Tenant</MenuItem>
                                         </Select>
                                         <FormHelperText>{helperText.role}</FormHelperText>
                                     </FormControl>
