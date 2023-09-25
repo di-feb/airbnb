@@ -114,18 +114,18 @@ export default function SignUp() {
         formData.append('consent', data.consent);
 
         try {
-            const response = await axios.post('http://localhost:8080/signup', formData, {
+            const response = await axios.post('https://localhost:8080/signup', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type
                 },
-                // httpsAgent: new https.Agent({
-                //     rejectUnauthorized: false, // Ignore certificate validation errors (not recommended for production)
-                // }),
             });
             if (response.status === 200)
                 handleTransition(TransitionLeft)
+
         } catch (error) {
-            console.error(error);
+            if (error.response.status === 400) {
+                usernameError(data.username, true, true)
+            }
         }
     };
 
@@ -163,7 +163,7 @@ export default function SignUp() {
         setTransition(() => Transition);
         setAlert(true);
 
-        if (data.role === 'Host') {
+        if (data.role === 'Host' || data.role === 'Host_Tenant') {
             setTimeout(() => {
                 navigate('/host');
             }, 3000);
@@ -173,6 +173,8 @@ export default function SignUp() {
                 navigate('/login');
             }, 3000);
         }
+
+
 
     };
     // Updates all fields values.  
@@ -200,7 +202,7 @@ export default function SignUp() {
     }
 
 
-    const usernameError = (username, submitClicked) => {
+    const usernameError = (username, submitClicked, usernameExists) => {
         if (username === '' && submitClicked) {
             setErrors((prev) => ({ ...prev, username: true }))
             setHelperText((prev) => ({ ...prev, username: 'Username is required.' }))
@@ -208,6 +210,10 @@ export default function SignUp() {
         else if (username.length > 10) {
             setErrors((prev) => ({ ...prev, username: true }))
             setHelperText((prev) => ({ ...prev, username: 'Username must be smaller than 10 characters.' }))
+        }
+        else if (usernameExists && submitClicked) {
+            setErrors((prev) => ({ ...prev, username: true }))
+            setHelperText((prev) => ({ ...prev, username: 'Username already exists. Try another one.' }))
         }
         else {
             setErrors((prev) => ({ ...prev, username: false }))
@@ -412,7 +418,7 @@ export default function SignUp() {
                             {(e) => {
                                 handleSubmit(e);
                                 profilePictureError(data.profilePicture, true)
-                                usernameError(data.username, true);
+                                usernameError(data.username, true, false);
                                 firstnameError(data.firstname, true);
                                 lastnameError(data.lastname, true);
                                 emailError(data.email, true);

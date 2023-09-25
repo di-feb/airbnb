@@ -92,11 +92,15 @@ export default function Login() {
 
         // Access the user's role from the decoded token
         const role = decodedToken.role;
-        console.log(role)
         if (role === 'Tenant')
             return 'Tenant'
-        else
+        else if (role === 'Host')
             return 'Host'
+        else if (role === 'Host_Tenant')
+            return 'Host_Tenant'
+        else
+            return 'Admin'
+
     }
 
     // Controls the navigation
@@ -117,6 +121,14 @@ export default function Login() {
                 navigate('/');
             }, 3000);
         }
+        else if (signedUp && role === 'Admin') {
+            setTransition(() => Transition);
+            setAlert(1);
+
+            setTimeout(() => {
+                navigate('/admin');
+            }, 3000);
+        }
         else {
             setTransition(() => Transition);
             setAlert(2);
@@ -128,16 +140,15 @@ export default function Login() {
 
         const areFieldsValid = Object.values(errors).every(error => error === false);
 
-        if(!areFieldsValid)
+        if (!areFieldsValid)
             return
         try {
-            const response = await axios.post('http://localhost:8080/login', {
+            const response = await axios.post('https://localhost:8080/login', {
                 username: data.username,
                 password: data.password,
             });
 
             if (response.status === 200) {
-                console.log(response.data)
                 const { access_token, refresh_token } = response.data;
                 localStorage.setItem('accessToken', access_token);
                 localStorage.setItem('refreshToken', refresh_token);
@@ -153,7 +164,7 @@ export default function Login() {
                 handleTransition(TransitionLeft, false);
                 setErrorMessage('Invalid username of password');
             }
-            else if (error.response.status === 401) {
+            else if (error.response.status === 426) {
                 handleTransition(TransitionLeft, false);
                 setErrorMessage('Your registration is pending approval from the administrator');
             }
@@ -171,15 +182,15 @@ export default function Login() {
             setHelperText((prev) => ({ ...prev, username: '' }))
         }
     }
-    
+
     const passwordError = (password, submitClicked) => {
         if (password === '' && submitClicked) {
             setErrors((prev) => ({ ...prev, password: true }))
             setHelperText((prev) => ({ ...prev, password: 'Password is required' }))
         }
-        else{
+        else {
             setErrors((prev) => ({ ...prev, password: false }))
-            setHelperText((prev) => ({ ...prev, password: 'Password is required' }))
+            setHelperText((prev) => ({ ...prev, password: '' }))
         }
     }
 
@@ -215,7 +226,7 @@ export default function Login() {
                                 passwordError(data.password, true);
                             }}
                             sx={{ mt: 1 }}>
-                            
+
                             <TextField
                                 margin="normal"
                                 required

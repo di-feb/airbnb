@@ -7,6 +7,7 @@ import Host from "./Host";
 import Accomondation from "./Accomondation";
 import ContactHost from "./ContactHost";
 import HostHome from "./HostHome";
+import Admin from './Admin';
 import "./css/style.css"
 
 
@@ -24,6 +25,7 @@ export default function App() {
                 <Route path="/hostHome" element={<HostHome />} />
                 <Route path="/accomondation" element={<Accomondation />} />
                 <Route path="/contactHost" element={<ContactHost />} />
+                <Route path="/admin" element={<Admin />} />
             </Routes>
         </Router>
 
