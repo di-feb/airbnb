@@ -7,13 +7,32 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Avatar, Typography } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
 import axios from 'axios';
-import Loading from './Loading';
+import { IconButton } from '@mui/material';
+import TuneIcon from '@mui/icons-material/Tune';
 
 export default function UsersTable() {
 
-    const [dataReady, setDataReady] = React.useState(false);
+    // const [dataReady, setDataReady] = React.useState(false);
     const [usersData, setUsersData] = React.useState([]);
+
+    const usersPerPage = 5; // Number of users to display per page
+    const [currentPage, setCurrentPage] = React.useState(1); // Number of current page
+
+    // Indexes for the users
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+
+    // Modify the users table so we can show a specific number of users.
+    const currentUsers = usersData.slice(indexOfFirstUser, indexOfLastUser);
+
+    const totalPageCount = Math.ceil(usersData.length / usersPerPage);
+
+    const handlePagination = (event, page) => {
+        setCurrentPage(page);
+    };
+
 
     const fetchData = async () => {
         try {
@@ -34,7 +53,7 @@ export default function UsersTable() {
 
                 if (users) {
                     setUsersData(users);
-                    setDataReady(true);
+                    // setDataReady(true);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -44,9 +63,10 @@ export default function UsersTable() {
         fetchDataAndSetData();
     }, []);
 
-    function seeUsers(event) {
-        event.preventDefault();
+    const modifyStats = () => {
+        return null
     }
+
 
     // if (!dataReady) {
     //     // Data is not ready yet, show loading or placeholder
@@ -65,7 +85,7 @@ export default function UsersTable() {
                     Users Information
                 </Typography>
             </Box>
-            <Table >
+            <Table>
                 <TableHead>
                     <TableRow>
                         <TableCell>Profile Picture</TableCell>
@@ -74,11 +94,13 @@ export default function UsersTable() {
                         <TableCell>Last Name</TableCell>
                         <TableCell>Email</TableCell>
                         <TableCell>Phone Number</TableCell>
-                        <TableCell align="right">Role</TableCell>
+                        <TableCell>Role</TableCell>
+                        <TableCell align="right">Modify</TableCell>
+
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {usersData.map((user) => (
+                    {currentUsers.map((user) => (
 
                         <TableRow key={user.id}>
                             <TableCell>
@@ -97,15 +119,32 @@ export default function UsersTable() {
                             <TableCell>{user.lastname}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{user.phoneNumber}</TableCell>
-                            <TableCell align="right">{user.role}</TableCell>
+                            <TableCell>{user.role}</TableCell>
+                            <TableCell align="right">
+                                <IconButton
+                                    edge="start"
+                                    color="default"
+                                    aria-label="modify"
+                                    onClick={modifyStats}
+                                >
+                                    <TuneIcon />
+                                </IconButton>
+
+                            </TableCell>
                         </TableRow>
 
                     ))}
                 </TableBody>
             </Table>
-            <Link color="primary" href="#" onClick={seeUsers} sx={{ mt: 3 }}>
-                See more users
-            </Link>
+            <Pagination
+                color='info'
+                count={totalPageCount}
+                defaultPage={1}
+                page={currentPage}
+                onChange={handlePagination}
+                siblingCount={0}
+                sx={{ mt: 2, justifyContent: 'center' }}
+            />
         </Box>
     );
 }

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Card from './Card';
 import axios from 'axios';
-import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
 import Loading from './Loading';
 
 export default function Main() {

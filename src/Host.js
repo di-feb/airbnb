@@ -2,7 +2,8 @@ import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Button, Divider, TextField, Typography } from "@mui/material";
+import { Button, Divider, Typography } from "@mui/material";
+import TextField from '@mui/material/TextField';
 import Box from "@mui/material/Box";
 import "./css/style.css";
 import SearchIcon from '@mui/icons-material/Search';
@@ -35,6 +36,8 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Dialog, DialogTitle, DialogContent, List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
+import axios from 'axios';
+
 dayjs.extend(duration);
 
 
@@ -61,7 +64,7 @@ export default function Host() {
 
     // const handleSearch = async () => {
     //     try {
-            
+
     //         const provider = new Geocoder({
     //             provider: 'openstreetmap',
     //             apiKey: 'AIzaSyAFxUYSNiDFXuakM1aPwbG-JIm6DLjd5kM', 
@@ -94,32 +97,143 @@ export default function Host() {
     const today = dayjs(new Date().toString());
     const nextMonth = dayjs(new Date(now.getFullYear(), now.getMonth() + 1, 1));
 
-
-    const [date, setDate] = React.useState({
-        checkIn: today,
-        checkOut: nextMonth,
-        checkInTime: null,
-        checkOutTime: null,
-    });
-
-    function diffInDays(date1, date2) {
-        const duration = dayjs.duration(date2.diff(date1));
-        return duration.asDays();
+    // Updates all fields values.  
+    // Checks if submit is clickable and updates canSubmit.
+    const handleFieldChange = (event) => {
+        const { name, value, checked } = event.target
+        setData(prevData => {
+            return {
+                ...prevData,
+                [name]: name === "isSmokingAllowed" ? checked : value
+            }
+        })
     }
 
-    const duration = Math.trunc(diffInDays(date.checkIn, date.checkOut))
+    const [data, setData] = React.useState({
+        location: '',
+        checkIn: null,
+        checkOut: null,
+        checkInTime: null,
+        checkOutTime: null,
+        maxPeople: '',
+        minPrice: '',
+        additionalCost: '',
+        typeOfSpace: '',
+        spaceArea: '',
+        numOfBedrooms: '',
+        numOfBathrooms: '',
+        numOfBeds: '',
+        numOfLivingrooms: '',
+        description: '',
+        numOfGuests: '',
+        numOfPets: '',
+        isSmokingAllowed: false,
+        pictures: []
+
+    })
+
+    const [errors, setErrors] = React.useState({
+        location: false,
+        checkIn: false,
+        checkOut: false,
+        checkInTime: false,
+        checkOutTime: false,
+        maxPeople: false,
+        minPrice: false,
+        additionalCost: false,
+        typeOfSpace: false,
+        spaceArea: false,
+        numOfBedrooms: false,
+        numOfBathrooms: false,
+        numOfBeds: false,
+        numOfLivingrooms: false,
+        description: false,
+        numOfGuests: false,
+        numOfPets: false,
+        isSmokingAllowed: false,
+        pictures: false
+
+    })
+
+    const helperText = "This field is required."
 
 
-    const [typeOfSpace, setTypeOfSpace] = React.useState('');
+    const checkForm = () => {
+        // Check if all fields are filled 
+        return Object.values(errors).every(error => error === false);
+    }
 
-    const [question, setQuestion] = React.useState('');
+    // Post the data into the backend
+    const handleSubmit = async (event, submitClicked) => {
+        event.preventDefault(); // Prevent the default form submission
 
-    const [checked, setChecked] = React.useState(false);
+        if (submitClicked) {
+            Object.keys(data).forEach((fieldName) => {
+                handleFieldError(fieldName, data[fieldName]);
+            });
+        }
+        console.log(errors)
+
+        console.log(checkForm())
+        if (!checkForm())
+            return;  // If there is an error dont submit
+
+        // Create a FormData object
+        const formData = new FormData();
+        // Append each field to the FormData object
+        formData.append('location', data.location);
+        formData.append('checkIn', data.checkIn);
+        formData.append('checkOut', data.checkOut);
+        formData.append('checkInTime', data.checkInTime);
+        formData.append('checkOutTime', data.checkOutTime);
+        formData.append('maxPeople', data.maxPeople);
+        formData.append('minPrice', data.minPrice);
+        formData.append('additionalCost', data.additionalCost);
+        formData.append('typeOfSpace', data.typeOfSpace);
+        formData.append('spaceArea', data.spaceArea);
+        formData.append('numOfBedrooms', data.numOfBedrooms);
+        formData.append('numOfBathrooms', data.numOfBathrooms);
+        formData.append('numOfBeds', data.numOfBeds);
+        formData.append('numOfLivingrooms', data.numOfLivingrooms);
+        formData.append('description', data.description);
+        formData.append('numOfGuest', data.numOfGuest);
+        formData.append('numOfPets', data.numOfPets);
+        formData.append('isSmokingAllowed', data.isSmokingAllowed);
+
+        // For the 'pictures' field, we append each file separately
+        data.pictures.forEach((file, index) => {
+            formData.append(`pictures[${index}]`, file);
+        });
+
+        try {
+            const response = await axios.post('https://localhost:8080/host', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Set the content type
+                },
+            });
+            if (response.status === 200)
+                handleTransition(TransitionLeft)
+
+        } catch (error) {
+            console.log(error)
+        }
+    };
+
+    const handleFieldError = (fieldName, value) => {
+        if (value === '' || value === null || value === false || value.length === 0) {
+            setErrors((prev) => ({ ...prev, [fieldName]: true }));
+        } else {
+            setErrors((prev) => ({ ...prev, [fieldName]: false }));
+        }
+    };
+
+
 
     const navigate = useNavigate();
 
     const [alert, setAlert] = React.useState(false);
-    const handleAlert = (event, reason) => {
+
+    const handleAlert = (reason) => {
         if (reason === 'clickaway') {
             return;
         }
@@ -152,14 +266,13 @@ export default function Host() {
 
     const fileInputRef = React.useRef(null);
 
-    const [fileList, setFileList] = React.useState([]);
+    const [imagePreview, setImagePreview] = React.useState([]);
 
-    function srcset(image, size, path) {
-        const imageSrc = require(`/mnt/c/Users/Stath/OneDrive/Εικόνες/Programming pics/${image}`)
+    function srcset(image, size) {
 
         return {
-            src: `${imageSrc}?w=${size}&h=${size}&fit=crop&auto=format`,
-            srcSet: `${imageSrc}?w=${size}&h=${size}&fit=crop&auto=format&dpr=2 2x`,
+            src: `${image}?w=${size}&h=${size}&fit=crop&auto=format`,
+            srcSet: `${image}?w=${size}&h=${size}&fit=crop&auto=format&dpr=2 2x`,
         };
     }
 
@@ -167,7 +280,11 @@ export default function Host() {
         const files = event.target.files;
         if (files.length === 0) return;
 
-        setFileList((prevFileList) => [...prevFileList, ...Array.from(files)]);
+        setData((prevData) => ({
+            ...prevData,
+            pictures: [...prevData.pictures, ...Array.from(files)],
+        }));
+        setImagePreview((prevData) => [...prevData, ...Array.from(URL.createObjectURL(files))]);
         event.target.value = null;
     };
 
@@ -175,12 +292,14 @@ export default function Host() {
 
     const handleDeletePicture = (index) => {
         // Remove the picture from the pictures list using its index
-        setFileList((prevPictures) => {
-            const updatedPictures = [...prevPictures];
+        setData((prevPictures) => {
+            const updatedPictures = [...prevPictures.pictures];
             updatedPictures.splice(index, 1);
             return updatedPictures;
         });
     };
+
+
 
     return (
         <>
@@ -223,11 +342,13 @@ export default function Host() {
                         </Popup>
                     </Marker>
                     <TextField
-                        name="Location"
+                        name="location"
                         placeholder="Search for your location..."
                         size="small"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
+                        value={data.location}
+                        onChange={(e) => handleFieldChange(e)}
+                        error={errors.location && data.location === ''}
+
                         sx={{
                             position: "absolute",
                             top: "30px",
@@ -243,7 +364,7 @@ export default function Host() {
                             sx: { borderRadius: "30px" },
                             startAdornment: (
                                 <InputAdornment position="start">
-                                     <IconButton > {/* onClick({()=> handleSearch}) */}
+                                    <IconButton > {/* onClick({()=> handleSearch}) */}
                                         <SearchIcon />
                                     </IconButton>
                                 </InputAdornment>
@@ -254,8 +375,20 @@ export default function Host() {
                             //     }
                             // }
                         }}
+                    />
+                    <Typography
+                        color={'#d32f2f'}
+                        fontWeight={800}
+                        sx={{
+                            zIndex: 1000,
+                            position: "absolute",
+                            top: "80px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                        }}
                     >
-                    </TextField>
+                        {errors.location && data.location === '' && helperText}
+                    </Typography>
                 </MapContainer>
 
 
@@ -264,6 +397,9 @@ export default function Host() {
                 </Typography>
                 <Container component="main" maxWidth="xs" >
                     <Box
+                        component="form"
+                        encType="multipart/form-data"
+                        noValidate
                         sx={{
                             mt: 2,
                             mb: 5,
@@ -279,21 +415,40 @@ export default function Host() {
                                     <MobileDatePicker
                                         required
                                         label="From"
-                                        value={date.checkIn}
-                                        onChange={(newValue) => setDate({ ...date, checkIn: newValue })}
+                                        value={data.checkIn}
+                                        onChange={(newValue) => setData({ ...data, checkIn: newValue })}
                                         minDate={today}
                                         formatDensity="dense"
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                variant: 'outlined',
+                                                error: errors.checkIn && data.checkIn === null,
+                                                helperText: errors.checkIn && data.checkIn === null && helperText
+                                            },
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <MobileDatePicker
                                         required
                                         label="To"
-                                        value={date.checkOut}
-                                        onChange={(newValue) => setDate({ ...date, checkOut: newValue })}
+                                        value={data.checkOut}
+                                        onChange={(newValue) => setData({ ...data, checkOut: newValue })}
                                         minDate={today}
                                         formatDensity="dense"
-                                        sx={{ ml: 3 }}
+                                        sx={{
+                                            ml: 3
+                                        }}
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                variant: 'outlined',
+                                                error: errors.checkOut && data.checkOut === null,
+                                                helperText: errors.checkOut && data.checkOut === null && helperText
+                                            },
+                                        }}
+
                                     />
                                 </Grid>
                             </LocalizationProvider>
@@ -306,37 +461,50 @@ export default function Host() {
                             <Grid item xs={12}>
                                 <TextField
                                     type='number'
+                                    value={data.maxPeople}
                                     required
                                     fullWidth
-                                    id="maxNumberofPeople"
+                                    id="maxPeople"
+                                    name="maxPeople"
                                     label="Maximum number of Peοple"
-                                    name="maxNumberofPeople"
                                     inputProps={{
                                         pattern: "[0-9]*", // only allow numbers
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                         max: 16
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.maxPeople && data.maxPeople === ''}
+                                    helperText={errors.maxPeople && data.maxPeople === '' && helperText}
                                 />
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField
                                     type='number'
+                                    value={data.minPrice}
                                     required
                                     fullWidth
                                     id="minPrice"
-                                    label="Minimun Price"
                                     name="minPrice"
+                                    label="Minimun Price"
                                     inputProps={{
                                         pattern: "[0-9]*", // only allow numbers
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.minPrice && data.minPrice === ''}
+                                    helperText={errors.minPrice && data.minPrice === '' && helperText}
                                 />
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField
                                     type='number'
+                                    value={data.additionalCost}
                                     required
                                     fullWidth
                                     id="additionalCost"
@@ -347,6 +515,11 @@ export default function Host() {
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.additionalCost && data.additionalCost === ''}
+                                    helperText={errors.additionalCost && data.additionalCost === '' && helperText}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -356,16 +529,18 @@ export default function Host() {
                                         labelId="typeOfSpaceLabel"
                                         id="typeOfSpace"
                                         name="typeOfSpace"
-                                        value={typeOfSpace}
+                                        value={data.typeOfSpace}
                                         label="Type of rental space"
-                                        onChange={(event) => {
-                                            setTypeOfSpace(event.target.value);
+                                        onChange={(e) => {
+                                            handleFieldChange(e);
                                         }}
+                                        error={errors.typeOfSpace && data.typeOfSpace === ''}
                                     >
                                         <MenuItem value={'privateRoom'}>Private Room</MenuItem>
                                         <MenuItem value={'sharedRoom'}>Shared Room</MenuItem>
                                         <MenuItem value={'entireResidence'}>Entire Residence</MenuItem>
                                     </Select>
+                                    <FormHelperText sx={{ color: '#d32f2f' }}>{errors.typeOfSpace && data.typeOfSpace === '' && helperText}</FormHelperText>
                                 </FormControl>
 
 
@@ -374,6 +549,7 @@ export default function Host() {
                             <Grid item xs={12}>
                                 <TextField
                                     type='number'
+                                    value={data.spaceArea}
                                     required
                                     fullWidth
                                     id="spaceArea"
@@ -384,6 +560,11 @@ export default function Host() {
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.spaceArea && data.spaceArea === ''}
+                                    helperText={errors.spaceArea && data.spaceArea === '' && helperText}
                                 />
                             </Grid>
                             <FormHelperText id="component-helper-text" sx={{ ml: 2 }}>
@@ -392,6 +573,7 @@ export default function Host() {
                             <Grid item xs={6}>
                                 <TextField
                                     type='number'
+                                    value={data.numOfBedrooms}
                                     required
                                     fullWidth
                                     id="numOfBedrooms"
@@ -402,11 +584,17 @@ export default function Host() {
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.numOfBedrooms && data.numOfBedrooms === ''}
+                                    helperText={errors.numOfBedrooms && data.numOfBedrooms === '' && helperText}
                                 />
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField
                                     type='number'
+                                    value={data.numOfBathrooms}
                                     required
                                     fullWidth
                                     id="numOfBathrooms"
@@ -417,11 +605,17 @@ export default function Host() {
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.numOfBathrooms && data.numOfBathrooms === ''}
+                                    helperText={errors.numOfBathrooms && data.numOfBathrooms === '' && helperText}
                                 />
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField
                                     type='number'
+                                    value={data.numOfBeds}
                                     required
                                     fullWidth
                                     id="numOfBeds"
@@ -432,21 +626,32 @@ export default function Host() {
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.numOfBeds && data.numOfBeds === ''}
+                                    helperText={errors.numOfBeds && data.numOfBeds === '' && helperText}
                                 />
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField
                                     type='number'
+                                    value={data.numOfLivingrooms}
                                     required
                                     fullWidth
-                                    id="numOfLivingRooms"
+                                    id="numOfLivingrooms"
                                     label="Number of Living Rooms"
-                                    name="numOfLivingRooms"
+                                    name="numOfLivingrooms"
                                     inputProps={{
                                         pattern: "[0-9]*", // only allow numbers
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.numOfLivingrooms && data.numOfLivingrooms === ''}
+                                    helperText={errors.numOfLivingrooms && data.numOfLivingrooms === '' && helperText}
                                 />
                             </Grid>
                         </Grid>
@@ -455,14 +660,16 @@ export default function Host() {
                         </Typography>
 
                         <TextField
-                            id="Desc"
-                            name="Desc"
+                            id="description"
+                            name="description"
                             multiline
                             minRows={4}
-                            value={question}
-                            onChange={(event) => {
-                                setQuestion(event.target.value);
+                            value={data.description}
+                            onChange={(e) => {
+                                handleFieldChange(e);
                             }}
+                            error={errors.description && data.description === ''}
+                            helperText={errors.description && data.description === '' && helperText}
                             sx={{
                                 width: '480px',
                                 mt: 1,
@@ -482,19 +689,36 @@ export default function Host() {
                                 <Grid item xs={6}>
                                     <MobileTimePicker
                                         label="Check In time"
-                                        value={date.checkInTime}
-                                        onChange={(newValue) => setDate({ ...date, checkInTime: newValue })}
+                                        value={data.checkInTime}
+                                        onChange={(newValue) => setData({ ...data, checkInTime: newValue })}
                                         formatDensity="dense"
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                variant: 'outlined',
+                                                error: errors.checkInTime && data.checkInTime === null,
+                                                helperText: errors.checkInTime && data.checkInTime === null && helperText
+
+                                            },
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <MobileTimePicker
                                         label="Check Out time"
-                                        value={date.checkOutTime}
-                                        onChange={(newValue) => setDate({ ...date, checkOutTime: newValue })}
+                                        value={data.checkOutTime}
+                                        onChange={(newValue) => setData({ ...data, checkOutTime: newValue })}
 
                                         formatDensity="dense"
-                                        sx={{ ml: 3 }}
+                                        sx={{ ml: 3, color: 'black' }}
+                                        slotProps={{
+                                            textField: {
+                                                fullWidth: true,
+                                                variant: 'outlined',
+                                                error: errors.checkOutTime && data.checkOutTime === null,
+                                                helperText: errors.checkOutTime && data.checkOutTime === null && helperText
+                                            },
+                                        }}
                                     />
                                 </Grid>
                                 <FormHelperText id="component-helper-text" sx={{ ml: 2 }}>
@@ -506,6 +730,7 @@ export default function Host() {
                             <Grid item xs={6}>
                                 <TextField
                                     type='number'
+                                    value={data.numOfGuests}
                                     required
                                     fullWidth
                                     id="numOfGuests"
@@ -516,11 +741,18 @@ export default function Host() {
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 1,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.numOfGuests && data.numOfGuests === ''}
+                                    helperText={errors.numOfGuests && data.numOfGuests === '' && helperText}
+
                                 />
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField
                                     type='number'
+                                    value={data.numOfPets}
                                     required
                                     fullWidth
                                     id="numOfPets"
@@ -531,19 +763,28 @@ export default function Host() {
                                         inputMode: "numeric", // show numeric keyboard on mobile devices
                                         min: 0,
                                     }}
+                                    onChange={(e) => {
+                                        handleFieldChange(e);
+                                    }}
+                                    error={errors.numOfPets && data.numOfPets === ''}
+                                    helperText={errors.numOfPets && data.numOfPets === '' && helperText}
+
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <FormControlLabel
                                     label="Is smoking inside allowed?"
+                                    sx={{ color: errors.isSmokingAllowed && !data.isSmokingAllowed && '#d32f2f' }}
                                     control={
                                         <Checkbox
-                                            name="smoking"
-                                            checked={checked}
-                                            onChange={(event) => {
-                                                setChecked(event.target.checked);
+                                            id="isSmokingAllowed"
+                                            name="isSmokingAllowed"
+                                            checked={data.isSmokingAllowed}
+                                            onChange={(e) => {
+                                                handleFieldChange(e);
                                             }}
                                             inputProps={{ 'aria-label': 'controlled' }}
+                                            sx={{ color: errors.isSmokingAllowed && !data.isSmokingAllowed && '#d32f2f' }}
                                         />
                                     }
                                 />
@@ -554,7 +795,7 @@ export default function Host() {
                         </Typography>
                         {
 
-                            fileList.length > 0 &&
+                            data.pictures.length > 0 &&
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <ImageList
                                     sx={{ width: 500, height: 111, borderRadius: '15px' }}
@@ -562,11 +803,11 @@ export default function Host() {
                                     cols={4}
                                     rowHeight={111}
                                 >
-                                    {fileList.map((item) => (
-                                        <ImageListItem key={item.name}>
+                                    {imagePreview.map((item) => (
+                                        <ImageListItem key={item}>
                                             <img
                                                 alt="home images"
-                                                {...srcset(item.name, 401, item.webkitRelativePath)}
+                                                {...srcset(item, 401, item.webkitRelativePath)}
                                                 loading="lazy"
                                             />
                                         </ImageListItem>
@@ -585,10 +826,10 @@ export default function Host() {
                             multiple
                         />
                         {
-                            fileList.length === 0 &&
+                            data.pictures.length === 0 &&
                             <Button
                                 variant='contained'
-                                color='inherit'
+                                color={data.pictures.length === 0 && errors.pictures ? 'error' : 'inherit'}
                                 endIcon={<PhotoCamera />}
                                 sx={{ textTransform: 'none' }}
                                 onClick={() => fileInputRef.current.click()}
@@ -596,8 +837,11 @@ export default function Host() {
                                 Add some pictures
                             </Button>
                         }
+                        <Typography color='#d32f2f' sx={{ mt: 2 }}>
+                            {data.pictures.length === 0 && errors.pictures && "You need to add pictures of your place."}
+                        </Typography>
                         {
-                            fileList.length > 0 &&
+                            data.pictures.length > 0 &&
                             <Grid container spacing={2} sx={{ width: '400px' }}>
                                 <Grid item xs={6}>
                                     <Button
@@ -633,7 +877,7 @@ export default function Host() {
                                 <Divider variant="middle" sx={{ borderColor: '#979797', mt: 0.3 }} />
                                 <DialogContent>
                                     <List>
-                                        {fileList.map((picture, index) => (
+                                        {data.pictures.map((picture, index) => (
                                             <ListItem key={index}>
                                                 {/* Display the picture */}
                                                 <ListItemAvatar>
@@ -661,7 +905,7 @@ export default function Host() {
                         <Button
                             type="file"
                             variant='contained'
-                            onClick={handleTransition(TransitionLeft)}
+                            onClick={(e) => { handleSubmit(e, true) }}
                             sx={{
                                 textTransform: 'none',
                                 backgroundImage: 'linear-gradient(to right, #d70000, #ff2615, #ff5a3c)',
