@@ -4,10 +4,10 @@ import SignUp from './SignUp';
 import Login from './Login';
 import Home from './Home';
 import Host from "./Host";
-import Accomondation from "./Accomondation";
+import Accommodation from "./Accommodation";
 import ContactHost from "./ContactHost";
 import HostHome from "./HostHome";
-import Admin from './Admin';
+import Admin from './admin/Admin';
 import "./css/style.css"
 
 
@@ -23,7 +23,7 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/host" element={<Host />} />
                 <Route path="/hostHome" element={<HostHome />} />
-                <Route path="/accomondation" element={<Accomondation />} />
+                <Route path="/accommodation" element={<Accommodation />} />
                 <Route path="/contactHost" element={<ContactHost />} />
                 <Route path="/admin" element={<Admin />} />
             </Routes>

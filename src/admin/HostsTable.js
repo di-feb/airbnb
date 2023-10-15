@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,14 +7,14 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Avatar, Typography } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
+import Switch from '@mui/material/Switch';
 import axios from 'axios';
-import { IconButton } from '@mui/material';
-import TuneIcon from '@mui/icons-material/Tune';
 
 export default function UsersTable() {
 
-    // const [dataReady, setDataReady] = React.useState(false);
-    const [usersData, setUsersData] = React.useState([]);
+    const [hostUser, setHostUsers] = React.useState([]);
+    const [hosts, setHosts] = React.useState([]);
+    const [switchValues, setSwitchValues] = React.useState({});
 
     const usersPerPage = 5; // Number of users to display per page
     const [currentPage, setCurrentPage] = React.useState(1); // Number of current page
@@ -25,55 +24,103 @@ export default function UsersTable() {
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
 
     // Modify the users table so we can show a specific number of users.
-    const currentUsers = usersData.slice(indexOfFirstUser, indexOfLastUser);
+    const currentUsers = hostUser.slice(indexOfFirstUser, indexOfLastUser);
 
-    const totalPageCount = Math.ceil(usersData.length / usersPerPage);
+    const totalPageCount = Math.ceil(hostUser.length / usersPerPage);
 
-    const handlePagination = (event, page) => {
+    const handlePagination = (page) => {
         setCurrentPage(page);
     };
 
-
     const fetchData = async () => {
         try {
-            const response = await axios.get('https://localhost:8080/admin/users');
+            const accessToken = localStorage.getItem('accessToken');
+            axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+            const [usersResponse, hostsResponse] = await Promise.all([
+                axios.get('https://localhost:8080/admin/hostUsers'),
+                axios.get('https://localhost:8080/admin/hosts'),
+            ]);
 
-            if (response.status === 200) {
-                return response.data
+            if (usersResponse.status === 200 && hostsResponse.status === 200) {
+                return {
+                    users: usersResponse.data,
+                    hosts: hostsResponse.data,
+                };
             }
         } catch (error) {
             console.error(error);
         }
     };
 
-    React.useEffect(() => {
-        const fetchDataAndSetData = async () => {
-            try {
-                const users = await fetchData();
+    
 
-                if (users) {
-                    setUsersData(users);
-                    // setDataReady(true);
+    const initiallizeSwitchValues = () => {
+        const initialSwitchValues = {};
+
+        hosts.forEach((host) => {
+            initialSwitchValues[host.id] = host.approved;
+        });
+
+        setSwitchValues(initialSwitchValues);
+    }
+
+    React.useEffect(() => {
+        const fetchSetData = async () => {
+            try {
+                const { users, hosts } = await fetchData();
+
+                if (users && hosts) {
+                    setHostUsers(users);
+                    setHosts(hosts);
+                    initiallizeSwitchValues();
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
 
-        fetchDataAndSetData();
+        fetchSetData();
     }, []);
 
-    const modifyStats = () => {
-        return null
+
+    const giveApproval = async (e, id) => {
+        const accessToken = localStorage.getItem('accessToken');
+        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+        const formData = new FormData();
+        formData.append('id', id);
+        formData.append('approved', !switchValues[id]);
+
+        try {
+            const response = await axios.post('https://localhost:8080/admin/setApproval', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Set the content type
+                },
+            });
+
+            if (response.status === 200) {
+                handleSwitchChange(e, id)
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
     }
 
 
-    // if (!dataReady) {
-    //     // Data is not ready yet, show loading or placeholder
-    //     return (
-    //        <Loading />
-    //     );
-    // }
+    const handleSwitchChange = (event, userId) => {
+        // const copy = switchValues
+        // const changeditem = copy[userId]
+        // changeditem[event.target.name] = event.target.value
+
+        setSwitchValues((prevSwitchValues) => ({
+            ...prevSwitchValues,
+            [userId]: event.target.checked,
+        }));
+    }
+
+
+
 
     return (
         <Box display='flex' alignItems='center' justifyContent='center' flexDirection='column' textAlign='center'>
@@ -94,15 +141,16 @@ export default function UsersTable() {
                         <TableCell>Last Name</TableCell>
                         <TableCell>Email</TableCell>
                         <TableCell>Phone Number</TableCell>
-                        <TableCell>Role</TableCell>
-                        <TableCell align="right">Modify</TableCell>
+                        <TableCell >Approved</TableCell>
 
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {currentUsers.map((user) => (
 
-                        <TableRow key={user.id}>
+                        <TableRow
+                            key={user.id}
+                        >
                             <TableCell>
                                 <Avatar
                                     alt="Profile picture"
@@ -114,23 +162,19 @@ export default function UsersTable() {
                                 />
 
                             </TableCell>
-                            <TableCell>{user.username}</TableCell>
+                            <TableCell >{user.username}</TableCell>
                             <TableCell>{user.firstname}</TableCell>
                             <TableCell>{user.lastname}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{user.phoneNumber}</TableCell>
-                            <TableCell>{user.role}</TableCell>
-                            <TableCell align="right">
-                                <IconButton
-                                    edge="start"
-                                    color="default"
-                                    aria-label="modify"
-                                    onClick={modifyStats}
-                                >
-                                    <TuneIcon />
-                                </IconButton>
+                            <TableCell>
+                                <Switch
+                                    checked={switchValues[user.id].approved}
+                                    onChange={(e) => { giveApproval(e, user.id) }}
 
+                                />
                             </TableCell>
+
                         </TableRow>
 
                     ))}

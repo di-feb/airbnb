@@ -15,11 +15,13 @@ import Paper from '@mui/material/Paper';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems } from './listItems';
-import Footer from './Footer'
+import ListItems from './ListItems';
+import Footer from '../Footer'
 
 import UsersTable from './UsersTable';
-import Logo from './Logo';
+import HostsTable from './HostsTable';
+
+import Logo from '../Logo';
 
 
 
@@ -72,12 +74,32 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+
+
 export default function Admin() {
     const [open, setOpen] = React.useState(true);
+
     const toggleDrawer = () => {
         setOpen(!open);
     };
 
+
+    const [selectTable, setSelectTable] = React.useState("Users")
+
+    const handleSelectedTable = (tableName) => {
+        if (tableName === 'Users')
+            return <UsersTable />
+        else if (tableName === 'Hosts')
+            return <HostsTable />
+        else if (tableName === 'Tenants')
+            return <UsersTable />
+        else if (tableName === 'Accommodations')
+            return <UsersTable />
+        else
+            return <UsersTable />
+
+
+    }
     return (
         <ThemeProvider theme={defaultTheme}>
             <Box sx={{ display: 'flex' }}>
@@ -117,6 +139,7 @@ export default function Admin() {
                         </IconButton>
                     </Toolbar>
                 </AppBar>
+
                 <Drawer variant="permanent" open={open}>
                     <Toolbar
                         sx={{
@@ -130,10 +153,16 @@ export default function Admin() {
                             <ChevronLeftIcon />
                         </IconButton>
                     </Toolbar>
+
                     <Divider />
+
                     <List component="nav">
-                        {mainListItems}
+                        <ListItems 
+                            setSelectedTable={setSelectTable}
+                            selectedTable={selectTable}
+                        />
                     </List>
+
                 </Drawer>
                 <Box
                     component="main"
@@ -148,16 +177,18 @@ export default function Admin() {
                     }}
                 >
                     <Toolbar />
+
                     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                         <Grid container spacing={3}>
                             {/* Recent UsersTable */}
                             <Grid item xs={12}>
                                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <UsersTable />
+
+                                    {handleSelectedTable(selectTable)}
                                 </Paper>
                             </Grid>
                         </Grid>
-                        <Footer/>
+                        <Footer />
                     </Container>
                 </Box>
             </Box>

@@ -266,39 +266,34 @@ export default function Host() {
 
     const fileInputRef = React.useRef(null);
 
-    const [imagePreview, setImagePreview] = React.useState([]);
-
-    function srcset(image, size) {
-
-        return {
-            src: `${image}?w=${size}&h=${size}&fit=crop&auto=format`,
-            srcSet: `${image}?w=${size}&h=${size}&fit=crop&auto=format&dpr=2 2x`,
-        };
-    }
-
     const handleFileUpload = (event) => {
         const files = event.target.files;
-        if (files.length === 0) return;
+        if (files === null) return;
 
         setData((prevData) => ({
             ...prevData,
             pictures: [...prevData.pictures, ...Array.from(files)],
         }));
-        setImagePreview((prevData) => [...prevData, ...Array.from(URL.createObjectURL(files))]);
-        event.target.value = null;
+        console.log(data.pictures)
     };
 
     const [openList, setOpenList] = React.useState(false);
 
     const handleDeletePicture = (index) => {
+        
         // Remove the picture from the pictures list using its index
-        setData((prevPictures) => {
-            const updatedPictures = [...prevPictures.pictures];
+        setData((prevData) => {
+            const updatedPictures = [...prevData.pictures];
             updatedPictures.splice(index, 1);
-            return updatedPictures;
-        });
-    };
+            console.log(data.pictures)
 
+            return {
+                ...prevData,
+                pictures: updatedPictures,
+            };
+        });
+        
+    };
 
 
     return (
@@ -803,12 +798,15 @@ export default function Host() {
                                     cols={4}
                                     rowHeight={111}
                                 >
-                                    {imagePreview.map((item) => (
-                                        <ImageListItem key={item}>
+                                    {data.pictures.map((picture, index) => (
+                                        <ImageListItem key={index}>
                                             <img
                                                 alt="home images"
-                                                {...srcset(item, 401, item.webkitRelativePath)}
+                                                src={URL.createObjectURL(picture)}
+
+                                                // srcSet={`${picture}?w=401&h=401&fit=crop&auto=format&dpr=2 2x`}
                                                 loading="lazy"
+                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                             />
                                         </ImageListItem>
                                     ))}
@@ -860,7 +858,7 @@ export default function Host() {
                                         color='error'
                                         endIcon={<DeleteIcon />}
                                         sx={{ textTransform: 'none' }}
-                                        onClick={() => setOpenList(true)}
+                                        onClick={()=> setOpenList(true)}
                                     >
                                         Delete pictures
                                     </Button>
@@ -869,38 +867,37 @@ export default function Host() {
                             </Grid>
 
                         }
-                        {
-                            openList &&
 
-                            <Dialog open={openList} onClose={() => setOpenList(false)}>
-                                <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >Picture List</DialogTitle>
-                                <Divider variant="middle" sx={{ borderColor: '#979797', mt: 0.3 }} />
-                                <DialogContent>
-                                    <List>
-                                        {data.pictures.map((picture, index) => (
-                                            <ListItem key={index}>
-                                                {/* Display the picture */}
-                                                <ListItemAvatar>
-                                                    <Avatar src={URL.createObjectURL(picture)} alt={`Picture ${index + 1}`} />
-                                                </ListItemAvatar>
+                        {/*                    picture list                     */}
+                        <Dialog open={data.pictures.length > 0 && openList} onClose={(prev)=>setOpenList(!prev)}>
+                            <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >Picture List</DialogTitle>
+                            <Divider variant="middle" sx={{ borderColor: '#979797', mt: 0.3 }} />
+                            <DialogContent>
+                                <List>
+                                    {data.pictures.map((picture, index) => (
+                                        <ListItem key={index}>
+                                            {/* Display the picture */}
+                                            <ListItemAvatar>
+                                                <Avatar src={URL.createObjectURL(picture)} alt={`Picture ${index + 1}`} />
+                                            </ListItemAvatar>
 
-                                                {/* Display the name of the picture */}
-                                                <ListItemText primary={picture.name} />
+                                            {/* Display the name of the picture */}
+                                            <ListItemText primary={picture.name} />
 
-                                                {/* Delete button */}
-                                                <IconButton onClick={() => handleDeletePicture(index)}>
-                                                    <DeleteIcon sx={{
-                                                        '&:hover': {
-                                                            color: 'black',
-                                                        },
-                                                    }} />
-                                                </IconButton>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </DialogContent>
-                            </Dialog>
-                        }
+                                            {/* Delete button */}
+                                            <IconButton onClick={() => handleDeletePicture(index)}>
+                                                <DeleteIcon sx={{
+                                                    '&:hover': {
+                                                        color: 'black',
+                                                    },
+                                                }} />
+                                            </IconButton>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </DialogContent>
+                        </Dialog>
+
 
                         <Button
                             type="file"

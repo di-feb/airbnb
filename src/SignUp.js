@@ -27,6 +27,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import validator from 'validator'
 import CollectionsIcon from '@mui/icons-material/Collections';
+import { Dialog, DialogTitle, DialogContent, Divider } from '@mui/material';
+
 
 const theme = createTheme();
 
@@ -94,6 +96,8 @@ export default function SignUp() {
         consent: '',
     })
 
+    const [approvalMessage, setApprovalMessage] = React.useState(false);
+
     // Post the data into the backend
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission
@@ -119,7 +123,9 @@ export default function SignUp() {
                     'Content-Type': 'multipart/form-data', // Set the content type
                 },
             });
-            if (response.status === 200)
+            if (response.status === 200 && (data.role=== 'Host' || data.role === 'Host_Tenant'))
+                setApprovalMessage((prev) => (!prev))
+            else
                 handleTransition(TransitionLeft)
 
         } catch (error) {
@@ -145,6 +151,7 @@ export default function SignUp() {
         // Check if all fields are error-free and filled
         const areFieldsValid = Object.values(errors).every(error => error === false);
         const areFieldsFilled =
+            data.profilePicture !== null &&
             data.username !== '' &&
             data.firstname !== '' &&
             data.lastname !== '' &&
@@ -163,20 +170,12 @@ export default function SignUp() {
         setTransition(() => Transition);
         setAlert(true);
 
-        if (data.role === 'Host' || data.role === 'Host_Tenant') {
-            setTimeout(() => {
-                navigate('/host');
-            }, 3000);
-        }
-        else {
-            setTimeout(() => {
-                navigate('/login');
-            }, 3000);
-        }
-
-
-
+        setTimeout(() => {
+            navigate('/login');
+        }, 6000);
     };
+
+
     // Updates all fields values.  
     // Checks if submit is clickable and updates canSubmit.
     const handleFieldChange = (event) => {
@@ -752,6 +751,27 @@ export default function SignUp() {
             >
                 <Copyright />
             </Box >
+
+            <Dialog open={approvalMessage} >
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >Pending approval by administrator</DialogTitle>
+                <Divider variant="middle" sx={{ borderColor: '#979797', mt: 0.3 }} />
+                <DialogContent sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                    <Typography textAlign='center' fontSize={16} width='200px'>
+                        Pending approval of your registration
+                        with the role of host by the administrator.
+                    </Typography>
+                    <Button
+                        variant='contained'
+                        onClick={(prev) => { setApprovalMessage(!prev); handleTransition(TransitionLeft); }}
+                        size='small'
+                        color='info'
+                        sx={{ textTransform: 'none', mt: 2 }}
+                    >
+                        Ok I got it!
+                    </Button>
+                </DialogContent>
+            </Dialog>
+
         </div >
     );
 }

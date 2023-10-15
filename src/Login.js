@@ -89,9 +89,9 @@ export default function Login() {
         if (accessToken === null)
             return null;
         const decodedToken = jwt_decode(accessToken);
-
+        console.log(decodedToken)
         // Access the user's role from the decoded token
-        const role = decodedToken.role;
+        const role = decodedToken.role
         if (role === 'Tenant')
             return 'Tenant'
         else if (role === 'Host')
@@ -105,6 +105,7 @@ export default function Login() {
 
     // Controls the navigation
     const handleTransition = (Transition, signedUp, role) => {
+        console.log(role)
         if (signedUp && (role === 'Host' || role === 'Host_Tenant')) {
             setTransition(() => Transition);
             setAlert(1);
@@ -152,7 +153,6 @@ export default function Login() {
                 const { access_token, refresh_token } = response.data;
                 localStorage.setItem('accessToken', access_token);
                 localStorage.setItem('refreshToken', refresh_token);
-                console.log(access_token)
 
                 const role = checkUserRole();
 
@@ -164,7 +164,7 @@ export default function Login() {
                 handleTransition(TransitionLeft, false);
                 setErrorMessage('Invalid username of password');
             }
-            else if (error.response.status === 426) {
+            else if (error.response.status === 403) {
                 handleTransition(TransitionLeft, false);
                 setErrorMessage('Your registration is pending approval from the administrator');
             }
