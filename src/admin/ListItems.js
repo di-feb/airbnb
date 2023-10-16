@@ -5,7 +5,6 @@ import ListItemText from '@mui/material/ListItemText';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
 import StarIcon from '@mui/icons-material/Star';
-import { selectClasses } from '@mui/material';
 
 
 export default function ListItems(props) {

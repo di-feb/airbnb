@@ -7,14 +7,11 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Avatar, Typography } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
-import Switch from '@mui/material/Switch';
 import axios from 'axios';
 
-export default function HostsTable() {
+export default function TenantsTable() {
 
-    const [hostUser, setHostUsers] = React.useState([]);
-    const [hosts, setHosts] = React.useState([]);
-    const [switchValues, setSwitchValues] = React.useState({});
+    const [tenants, setTenants] = React.useState([]);
 
     const usersPerPage = 5; // Number of users to display per page
     const [currentPage, setCurrentPage] = React.useState(1); // Number of current page
@@ -24,9 +21,9 @@ export default function HostsTable() {
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
 
     // Modify the users table so we can show a specific number of users.
-    const currentUsers = hostUser.slice(indexOfFirstUser, indexOfLastUser);
+    const currentUsers = tenants.slice(indexOfFirstUser, indexOfLastUser);
 
-    const totalPageCount = Math.ceil(hostUser.length / usersPerPage);
+    const totalPageCount = Math.ceil(tenants.length / usersPerPage);
 
     const handlePagination = (page) => {
         setCurrentPage(page);
@@ -36,15 +33,11 @@ export default function HostsTable() {
         try {
             const accessToken = localStorage.getItem('accessToken');
             axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-            const [usersResponse, hostsResponse] = await Promise.all([
-                axios.get('https://localhost:8080/admin/hostUsers'),
-                axios.get('https://localhost:8080/admin/hosts'),
-            ]);
+            const response = await axios.get('https://localhost:8080/admin/tenantUsers');
 
-            if (usersResponse.status === 200 && hostsResponse.status === 200) {
+            if (response.status === 200) {
                 return {
-                    users: usersResponse.data,
-                    hosts: hostsResponse.data,
+                    tenants: response.data,
                 };
             }
         } catch (error) {
@@ -54,28 +47,15 @@ export default function HostsTable() {
 
     
 
-    const initiallizeSwitchValues = () => {
-        if(hosts.length === 0) return;
-
-        const initialSwitchValues = {};
-
-        hosts.forEach((host) => {
-            initialSwitchValues[host.id] = host.approved;
-        });
-
-        setSwitchValues(initialSwitchValues);
-    }
 
     React.useEffect(() => {
         const fetchSetData = async () => {
             try {
-                const { users, hosts } = await fetchData();
+                const tenants = await fetchData();
 
-                if (users && hosts) {
-                    setHostUsers(users);
-                    setHosts(hosts);
-                    initiallizeSwitchValues();
-                }
+                if (tenants) 
+                    setTenants(tenants);
+                
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -84,42 +64,6 @@ export default function HostsTable() {
         fetchSetData();
     }, []);
 
-
-    const giveApproval = async (e, id) => {
-        const accessToken = localStorage.getItem('accessToken');
-        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-
-        const formData = new FormData();
-        formData.append('id', id);
-        formData.append('approved', !switchValues[id]);
-
-        try {
-            const response = await axios.post('https://localhost:8080/admin/setApproval', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // Set the content type
-                },
-            });
-
-            if (response.status === 200) {
-                handleSwitchChange(e, id)
-            }
-
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-
-    const handleSwitchChange = (event, userId) => {
-        // const copy = switchValues
-        // const changeditem = copy[userId]
-        // changeditem[event.target.name] = event.target.value
-
-        setSwitchValues((prevSwitchValues) => ({
-            ...prevSwitchValues,
-            [userId]: event.target.checked,
-        }));
-    }
 
 
 
@@ -143,7 +87,7 @@ export default function HostsTable() {
                         <TableCell>Last Name</TableCell>
                         <TableCell>Email</TableCell>
                         <TableCell>Phone Number</TableCell>
-                        <TableCell >Approved</TableCell>
+                        <TableCell >Role</TableCell>
 
                     </TableRow>
                 </TableHead>
@@ -164,18 +108,12 @@ export default function HostsTable() {
                                 />
 
                             </TableCell>
-                            <TableCell >{user.username}</TableCell>
+                            <TableCell>{user.username}</TableCell>
                             <TableCell>{user.firstname}</TableCell>
                             <TableCell>{user.lastname}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{user.phoneNumber}</TableCell>
-                            <TableCell>
-                                <Switch
-                                    checked={switchValues[user.id]?.approved}
-                                    onChange={(e) => { giveApproval(e, user.id) }}
-
-                                />
-                            </TableCell>
+                            <TableCell>{user.role}</TableCell>
 
                         </TableRow>
 

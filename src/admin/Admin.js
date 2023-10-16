@@ -22,6 +22,7 @@ import UsersTable from './UsersTable';
 import HostsTable from './HostsTable';
 
 import Logo from '../Logo';
+import TenantsTable from './TenantsTable';
 
 
 
@@ -92,7 +93,7 @@ export default function Admin() {
         else if (tableName === 'Hosts')
             return <HostsTable />
         else if (tableName === 'Tenants')
-            return <UsersTable />
+            return <TenantsTable />
         else if (tableName === 'Accommodations')
             return <UsersTable />
         else
