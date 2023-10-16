@@ -55,6 +55,8 @@ export default function UsersTable() {
     
 
     const initiallizeSwitchValues = () => {
+        if(hosts.length === 0) return;
+
         const initialSwitchValues = {};
 
         hosts.forEach((host) => {
@@ -169,7 +171,7 @@ export default function UsersTable() {
                             <TableCell>{user.phoneNumber}</TableCell>
                             <TableCell>
                                 <Switch
-                                    checked={switchValues[user.id].approved}
+                                    checked={switchValues[user.id]?.approved}
                                     onChange={(e) => { giveApproval(e, user.id) }}
 
                                 />
