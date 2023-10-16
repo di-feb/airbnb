@@ -83,29 +83,54 @@ export default function Login() {
 
     const [errorMessage, setErrorMessage] = React.useState('');
 
-    const checkUserRole = () => {
+    const findUserRole = async (username) => {
+        try {
+            const response = await axios.get('https://localhost:8080/login/role', {
+                params: {
+                    username: username,
+                },
+            });
+
+            if (response.status === 200) {
+                const role = response.data;
+                console.log(role)
+                return role;
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+    const checkUserRole = async () => {
         // Decode the JWT token
         const accessToken = localStorage.getItem('accessToken');
         if (accessToken === null)
             return null;
         const decodedToken = jwt_decode(accessToken);
-        console.log(decodedToken)
-        // Access the user's role from the decoded token
-        const role = decodedToken.role
-        if (role === 'Tenant')
-            return 'Tenant'
-        else if (role === 'Host')
-            return 'Host'
-        else if (role === 'Host_Tenant')
-            return 'Host_Tenant'
-        else
-            return 'Admin'
+        try {
+            // Access the user's role from the decoded token
+            const role = await findUserRole(decodedToken.sub);
+
+            if (role === 'Tenant')
+                return 'Tenant'
+            else if (role === 'Host')
+                return 'Host'
+            else if (role === 'Host_Tenant')
+                return 'Host_Tenant'
+            else
+                return 'Admin'
+        }
+        catch (error) {
+            console.error(error);
+        }
 
     }
 
     // Controls the navigation
     const handleTransition = (Transition, signedUp, role) => {
         console.log(role)
+        console.log(signedUp)
         if (signedUp && (role === 'Host' || role === 'Host_Tenant')) {
             setTransition(() => Transition);
             setAlert(1);
@@ -117,7 +142,6 @@ export default function Login() {
         else if (signedUp && role === 'Tenant') {
             setTransition(() => Transition);
             setAlert(1);
-
             setTimeout(() => {
                 navigate('/');
             }, 3000);
@@ -125,7 +149,6 @@ export default function Login() {
         else if (signedUp && role === 'Admin') {
             setTransition(() => Transition);
             setAlert(1);
-
             setTimeout(() => {
                 navigate('/admin');
             }, 3000);
@@ -150,12 +173,13 @@ export default function Login() {
             });
 
             if (response.status === 200) {
+                // Clear the local storage
+                localStorage.clear();
                 const { access_token, refresh_token } = response.data;
                 localStorage.setItem('accessToken', access_token);
                 localStorage.setItem('refreshToken', refresh_token);
 
-                const role = checkUserRole();
-
+                const role = await checkUserRole();
                 handleTransition(TransitionLeft, true, role);
                 setErrorMessage('');
             }

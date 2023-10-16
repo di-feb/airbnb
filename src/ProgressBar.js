@@ -26,6 +26,7 @@ LinearProgressWithLabel.propTypes = {
 };
 
 export default function ProgressBar(props) {
+    // eslint-disable-next-line
     const [progress, setProgress] = React.useState(props.value * 20);
 
     

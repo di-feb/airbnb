@@ -1,7 +1,7 @@
 import React from 'react';
 import HostNavbar from './HostNavbar';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
+// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+// import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
