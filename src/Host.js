@@ -62,31 +62,7 @@ export default function Host() {
     const [center, setCenter] = React.useState(initialCoordinates);
 
 
-    // const handleSearch = async () => {
-    //     try {
-
-    //         const provider = new Geocoder({
-    //             provider: 'openstreetmap',
-    //             apiKey: 'AIzaSyAFxUYSNiDFXuakM1aPwbG-JIm6DLjd5kM', 
-    //             formatter: null
-    //         });
-
-    //         console.log(location);
-    //         console.log(provider);
-    //         const results = await provider.geocode(location);
-    //         if (results.length > 0) {
-    //             const { latitude: lat, longitude: lng } = results[0];
-    //             console.log("hi");
-    //             setCoordinates([lat, lng]);
-    //             setCenter([lat, lng]);
-    //             console.log(center);
-    //         } else {
-    //             console.log('No results found');
-    //         }
-    //     } catch (error) {
-    //         console.log('Error:', error);
-    //     }
-    // };
+   
 
 
     const handleLocationChange = (newLocation) => {
